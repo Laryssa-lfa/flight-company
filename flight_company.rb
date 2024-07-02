@@ -1,4 +1,7 @@
+require 'date'
+
 origin_airport = ''; destination_airport = ''; departure_time = ''; arrival_time = ''
+response_type = ['S', 's', 'sim', 'Sim', 'SIM']
 
 puts '==========================================='
 puts '   Projeto de Companhia Aérea - Rebase'
@@ -7,40 +10,41 @@ puts ''
 while (origin_airport.empty?) do
   puts '- Qual é o aeroporto de origem?'
   origin = gets.chomp
-  origin.each_char { |c| c.match?(/[0-9]/) ? (puts 'A resposta não pode conter números.'; break) : (origin_airport = origin if origin.byteslice(-1).eql?(c)) }
+  origin.match?(/^[[:alpha:]]+$/) ? (origin_airport = origin) : (puts 'Na resposta deve conter apenas letras.')
   puts ''
 end
 
 while (destination_airport.empty?) do
   puts '- Qual é o aeroporto de destino?'
   destination = gets.chomp
-  destination.each_char { |c| c.match?(/[0-9]/) ? (puts 'A resposta não pode conter números.'; break) : (destination_airport = destination if destination.byteslice(-1).eql?(c)) }
+  destination.match?(/^[[:alpha:]]+$/) ? (destination_airport = destination) : (puts 'Na resposta deve conter apenas.')
   puts ''
 end
 
 while (departure_time.empty?) do
   puts '- Qual a data que deseja partir? [Formato: dd/mm/aaaa]'
   date = gets.chomp
-  if date.match?(/[0-9]\//)
-    date_time = Time.new(date.slice(6..-1), date.slice(3..4), date.slice(0..1))
-    date_time > Time.now ? (departure_time = date) : (puts 'A data deve ser maior que hoje.')
+  if date.match?(/^\d{2}\/\d{2}\/\d{4}$/)
+    Date.parse(date) >= Date.today ? (departure_time = date) : (puts 'A data deve ser maior que hoje.')
   else
     puts 'Insira uma data válida no formato dd/mm/aaa.'
   end
   puts ''
 end
 
+puts '- Deseja informar a data de retorno? S/N'
+arrival = gets.chomp
+
 while (arrival_time.empty?) do
   puts '- Qual será a data de retorno? [Formato: dd/mm/aaaa]'
   date = gets.chomp
-  if date.match?(/[0-9]\//)
-    date_time = Time.new(date.slice(6..-1), date.slice(3..4), date.slice(0..1))
-    date_time > Time.now ? (arrival_time = date) : (puts 'A data deve ser maior que hoje.')
+  if date.match?(/^\d{2}\/\d{2}\/\d{4}$/)
+    Date.parse(date) >= Date.today ? (arrival_time = date) : (puts 'A data deve ser maior que hoje.')
   else
     puts 'Insira uma data válida no formato dd/mm/aaa.'
   end
   puts ''
-end
+end if response_type.include?(arrival)
 
 puts '----------------------------'
 puts '   Resumo'
