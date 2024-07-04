@@ -7,33 +7,34 @@ airports = File.read('airports.json')
 puts '==========================================='
 puts '   Projeto de Companhia Aérea - Rebase'
 
-while (origin_airport.empty?) do
+while origin_airport.empty? do
   puts ''
   puts '- Qual é o aeroporto de origem? [Formato: abreviado com 3 letras, por exemplo: GRU]'
   origin = gets.chomp
-  if (origin.length.eql?(3) && origin.match?(/^[[:alpha:]]+$/))
+  if origin.match?(/^[a-zA-Z]{3}$/)
     airports.include?(origin.upcase) ? (origin_airport = origin) : (puts '=> Aeroporto inválido.')
   else
     puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
   end
 end
 
-while (destination_airport.empty?) do
+while destination_airport.empty? do
   puts ''
   puts '- Qual é o aeroporto de destino? [Formato: abreviado com 3 letras, por exemplo: GRU]'
   destination = gets.chomp
-  if (destination.length.eql?(3) && destination.match?(/^[[:alpha:]]+$/))
-    if (!destination.eql?(origin_airport))
-      airports.include?(destination.upcase) ? (destination_airport = destination) : (puts '=> Aeroporto inválido.')
-    else
+  case
+    when !destination.match?(/^[a-zA-Z]{3}$/)
+      puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
+    when destination.eql?(origin_airport)
       puts '=> Aeroporto de destino não pode ser o mesmo de origem.'
-    end
-  else
-    puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
+    when airports.include?(destination.upcase)
+      destination_airport = destination
+    when !destination.eql?(origin_airport)
+      puts '=> Aeroporto inválido.'
   end
 end
 
-while (departure_time.empty?) do
+while departure_time.empty? do
   puts ''
   puts '- Qual a data que deseja partir? [Formato: dd/mm/aaaa]'
   date = gets.chomp
@@ -52,13 +53,13 @@ puts ''
 puts '- Deseja informar a data de retorno? S/N'
 arrival = gets.chomp
 
-while (arrival_time.empty?) do
+while arrival_time.empty? do
   puts ''
   puts '- Qual será a data de retorno? [Formato: dd/mm/aaaa]'
   date = gets.chomp
   if date.match?(/^\d{2}\/\d{2}\/\d{4}$/)
     begin
-      date > departure_time ? (arrival_time = date) : (puts '=> A data deve ser maior que o dia da partida.')
+      Date.parse(date).strftime('%d/%m/%Y') > departure_time ? (arrival_time = date) : (puts '=> A data deve ser maior que o dia da partida.')
     rescue
       puts '=> Insira uma data válida.'
     end
