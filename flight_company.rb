@@ -3,14 +3,15 @@ require 'net/http'
 require 'uri'
 
 origin_airport = ''; destination_airport = ''; departure_time = ''; arrival_time = ''
-arrival_response = ['S', 's', 'sim', 'Sim', 'SIM']
+ARRIVAL_RESPONSE = ['S', 's', 'sim', 'Sim', 'SIM']
+ENV = {}
 
-airports = File.read('airports.json')
-file = File.read('.env').split("\n")
+AIRPORTS = File.read('airports.json')
+file_envs = File.read('.env').split("\n")
 
-ENV['URL_API'] = file[0].split('=').last
-ENV['HOST_API'] = file[1].split('=').last
-ENV['KEY_API'] = file[2].split('=').last
+file_envs.each do |env|
+  ENV[env.split('=').first] = env.split('=').last
+end
 
 puts '==========================================='
 puts '   Projeto de Companhia Aérea - Rebase'
@@ -19,7 +20,7 @@ while origin_airport.empty? do
   puts "\n- Qual é o aeroporto de origem? [Formato: abreviado com 3 letras, por exemplo: GRU]"
   origin = gets.chomp
   if origin.match?(/^[a-zA-Z]{3}$/)
-    airports.include?(origin.upcase) ? (origin_airport = origin) : (puts '=> Aeroporto inválido.')
+    AIRPORTS.include?(origin.upcase) ? (origin_airport = origin) : (puts '=> Aeroporto inválido.')
   else
     puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
   end
@@ -33,7 +34,7 @@ while destination_airport.empty? do
       puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
     when destination.eql?(origin_airport)
       puts '=> Aeroporto de destino não pode ser o mesmo de origem.'
-    when airports.include?(destination.upcase)
+    when AIRPORTS.include?(destination.upcase)
       destination_airport = destination
     when !destination.eql?(origin_airport)
       puts '=> Aeroporto inválido.'
@@ -69,7 +70,7 @@ while arrival_time.empty? do
   else
     puts '=> Insira uma data válida e no formato dd/mm/aaaa.'
   end
-end if arrival_response.include?(arrival)
+end if ARRIVAL_RESPONSE.include?(arrival)
 
 def http_request(url)
   http = Net::HTTP.new(url.host, url.port)
@@ -82,7 +83,7 @@ def http_request(url)
   eval(http.request(request).read_body)
 end
 
-if !arrival_response.include?(arrival)
+if !ARRIVAL_RESPONSE.include?(arrival)
   url_one_way = URI("#{ENV['URL_API']}/search-one-way?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&cabinClass=economy")
   response_one_way = http_request(url_one_way)
   departure_data = response_one_way[:data][:itineraries]
