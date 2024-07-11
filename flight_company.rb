@@ -1,17 +1,18 @@
 require 'date'
 require 'net/http'
 require 'uri'
+require 'json'
 
-origin_airport = ''; destination_airport = ''; departure_time = ''; arrival_time = ''
-ARRIVAL_RESPONSE = ['S', 's', 'sim', 'Sim', 'SIM']
-ENV = {}
-
+ARRIVAL_RESPONSE = %w[S s sim Sim SIM].freeze
 AIRPORTS = File.read('airports.json')
-file_envs = File.read('.env').split("\n")
 
-file_envs.each do |env|
-  ENV[env.split('=').first] = env.split('=').last
-end
+origin_airport = ''
+destination_airport = ''
+departure_time = ''
+arrival_time = ''
+
+file_envs = File.read('.env').split(%r{=|\n})
+ENV = Hash[*file_envs]
 
 puts '==========================================='
 puts '   Projeto de Companhia Aérea - Rebase'
@@ -44,7 +45,7 @@ end
 while departure_time.empty? do
   puts "\n- Qual a data que deseja partir? [Formato: dd/mm/aaaa]"
   date = gets.chomp
-  if date.match?(/^\d{2}\/\d{2}\/\d{4}$/)
+  if date.match?(%r{^\d{2}/\d{2}/\d{4}$})
     begin
       Date.parse(date) >= Date.today ? (departure_time = date) : (puts '=> A data deve ser maior que hoje.')
     rescue
@@ -61,7 +62,7 @@ arrival = gets.chomp
 while arrival_time.empty? do
   puts "\n- Qual será a data de retorno? [Formato: dd/mm/aaaa]"
   date = gets.chomp
-  if date.match?(/^\d{2}\/\d{2}\/\d{4}$/)
+  if date.match?(%r{^\d{2}/\d{2}/\d{4}$})
     begin
       Date.parse(date).strftime('%d/%m/%Y') > departure_time ? (arrival_time = date) : (puts '=> A data deve ser maior que o dia da partida.')
     rescue
@@ -80,40 +81,16 @@ def http_request(url)
   request["x-rapidapi-key"] = ENV['KEY_API']
   request["x-rapidapi-host"] = ENV['HOST_API']
 
-  eval(http.request(request).read_body)
+  result = http.request(request).read_body
+  JSON.parse(result, symbolize_names: true)
 end
 
-if !ARRIVAL_RESPONSE.include?(arrival)
-  url_one_way = URI("#{ENV['URL_API']}/search-one-way?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&cabinClass=economy")
-  response_one_way = http_request(url_one_way)
-  departure_data = response_one_way[:data][:itineraries]
-
-  if departure_data.empty?
-    puts "\n-------------------------------------"
-    puts 'Temporariamente sem opções de voos!'
-    puts '-------------------------------------'
-  else
-    puts "\n-------------------------------------------"
-    puts "  Opções de Voos"
-    puts "  - Saindo de #{origin_airport.upcase} para #{destination_airport.upcase} em #{departure_time}"
-    puts "-------------------------------------------"
-
-    departure_data.each_index do |index|
-      puts "\n- Opção #{index+1}"
-      puts "   Preço: #{departure_data[index][:price][:formatted]}"
-      puts "   Quantidade de conexão: #{departure_data[index][:legs][0][:stopCount]}"
-      puts "   Duração do voo: #{departure_data[index][:legs][0][:durationInMinutes]/60} horas"
-      puts "   Horario de saida: #{departure_data[index][:legs][0][:departure]}"
-      puts "   Horario de chegada: #{departure_data[index][:legs][0][:arrival]}"
-      puts "-------\n"
-    end
-  end
-else
+if ARRIVAL_RESPONSE.include?(arrival)
   url_roundtrip = URI("#{ENV['URL_API']}/search-roundtrip?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&returnDate=#{Date.parse(arrival_time).strftime('%Y-%m-%d')}&cabinClass=economy")
   response_roundtrip = http_request(url_roundtrip)
   arrival_data = response_roundtrip[:data][:itineraries]
 
-  if arrival_data.empty?
+  if !response_roundtrip[:status] || arrival_data.empty?
     puts "\n-------------------------------------"
     puts 'Temporariamente sem opções de voos!'
     puts '-------------------------------------'
@@ -134,6 +111,31 @@ else
         puts "   Horario de saida: #{arrival_data[index][:legs][i][:departure]}"
         puts "   Horario de chegada: #{arrival_data[index][:legs][i][:arrival]}"
       end
+      puts "-------\n"
+    end
+  end
+else
+  url_one_way = URI("#{ENV['URL_API']}/search-one-way?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&cabinClass=economy")
+  response_one_way = http_request(url_one_way)
+  departure_data = response_one_way[:data][:itineraries]
+
+  if !response_one_way[:status] || departure_data.empty?
+    puts "\n-------------------------------------"
+    puts 'Temporariamente sem opções de voos!'
+    puts '-------------------------------------'
+  else
+    puts "\n-------------------------------------------"
+    puts "  Opções de Voos"
+    puts "  - Saindo de #{origin_airport.upcase} para #{destination_airport.upcase} em #{departure_time}"
+    puts "-------------------------------------------"
+
+    departure_data.each_index do |index|
+      puts "\n- Opção #{index+1}"
+      puts "   Preço: #{departure_data[index][:price][:formatted]}"
+      puts "   Quantidade de conexão: #{departure_data[index][:legs][0][:stopCount]}"
+      puts "   Duração do voo: #{departure_data[index][:legs][0][:durationInMinutes]/60} horas"
+      puts "   Horario de saida: #{departure_data[index][:legs][0][:departure]}"
+      puts "   Horario de chegada: #{departure_data[index][:legs][0][:arrival]}"
       puts "-------\n"
     end
   end
