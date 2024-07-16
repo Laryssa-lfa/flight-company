@@ -1,12 +1,7 @@
 if ARGV[0].eql?('rubocop')
-  begin
-    require "bundler/inline"
-  rescue LoadError => e
-    $stderr.puts "Bundler version 1.10 or later is required. Please update your Bundler"
-    raise e
-  end
+  require "bundler/inline"
 
-  gemfile(true) do
+  gemfile do
     source "https://rubygems.org"
 
     gem 'rubocop', require: false
