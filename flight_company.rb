@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'date'
 require 'net/http'
 require 'uri'
@@ -58,16 +60,20 @@ end
 puts "\n- Deseja informar a data de retorno? S/N"
 arrival = gets.chomp
 
+def date_validation(date, departure_time)
+  return puts '=> A data deve ser maior que o dia da partida.' unless Date.parse(date) > Date.parse(departure_time)
+
+  date
+rescue StandardError
+  puts '=> Insira uma data válida.'
+end
+
 if ARRIVAL_RESPONSE.include?(arrival)
   while arrival_time.empty?
     puts "\n- Qual será a data de retorno? [Formato: dd/mm/aaaa]"
     date = gets.chomp
     if date.match?(%r{^\d{2}/\d{2}/\d{4}$})
-      begin
-        Date.parse(date) > Date.parse(departure_time) ? (arrival_time = date) : (puts '=> A data deve ser maior que o dia da partida.')
-      rescue StandardError
-        puts '=> Insira uma data válida.'
-      end
+      arrival_time = date_validation(date, departure_time).to_s
     else
       puts '=> Insira uma data válida e no formato dd/mm/aaaa.'
     end
@@ -87,9 +93,10 @@ def http_request(url)
 end
 
 if ARRIVAL_RESPONSE.include?(arrival)
-  url_roundtrip = URI(
-    "#{ENV.fetch('URL_API')}/search-roundtrip?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&returnDate=#{Date.parse(arrival_time).strftime('%Y-%m-%d')}&cabinClass=economy"
-  )
+  url_roundtrip = URI("#{ENV.fetch('URL_API')}/search-roundtrip?fromEntityId=#{origin_airport.upcase}\
+&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}\
+&returnDate=#{Date.parse(arrival_time).strftime('%Y-%m-%d')}&cabinClass=economy")
+
   response_roundtrip = http_request(url_roundtrip)
   arrival_data = response_roundtrip[:data][:itineraries]
 
@@ -118,9 +125,10 @@ if ARRIVAL_RESPONSE.include?(arrival)
     end
   end
 else
-  url_one_way = URI(
-    "#{ENV.fetch('URL_API')}/search-one-way?fromEntityId=#{origin_airport.upcase}&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}&cabinClass=economy"
-  )
+  url_one_way = URI("#{ENV.fetch('URL_API')}/search-one-way?fromEntityId=#{origin_airport.upcase}\
+&toEntityId=#{destination_airport.upcase}&departDate=#{Date.parse(departure_time).strftime('%Y-%m-%d')}\
+&cabinClass=economy")
+
   response_one_way = http_request(url_one_way)
   departure_data = response_one_way[:data][:itineraries]
 
