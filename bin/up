@@ -8,6 +8,8 @@ if ARGV[0].eql?('rubocop')
   end
 
   system('rubocop')
+elsif ARGV[0].eql?('test')
+  require './test/flight_company_test'
 else
-  require './flight_company.rb'
+  require './flight_company'
 end
