@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'test/unit'
+require 'minitest/mock'
 require 'date'
 require './flight_validator_service'
-require './flight_data_service'
 
 # rubocop:disable all
 class FlightCompanyTest < Test::Unit::TestCase
@@ -38,6 +38,29 @@ class FlightCompanyTest < Test::Unit::TestCase
     assert_empty(service('31/06/2024'))
   end
 
-  def test_data_validation
+  def test_summary_flights
+    flight_data_service = Minitest::Mock.new
+
+    # one way tests
+    data_flight_one_way = {
+      origin_airport: 'jpa',
+      destination_airport: 'gru',
+      departure_time: '17/07/2024'
+    }
+
+    flight_data_service.expect(:execute, true, [data_flight_one_way])
+    flight_data_service.expect(:itineraries_one_way, 'one_way_response')
+    assert_equal('one_way_response', flight_data_service.itineraries_one_way)
+
+    # roundtrip tests
+    data_flight_roundtrip = {
+      origin_airport: 'jpa',
+      destination_airport: 'gru',
+      departure_time: data_flight_one_way[:destination_airport]
+    }
+
+    flight_data_service.expect(:execute, true, [data_flight_roundtrip])
+    flight_data_service.expect(:itineraries_one_way, 'roundtrip_response', ['20/07/2024'])
+    assert_equal('roundtrip_response', flight_data_service.itineraries_one_way('20/07/2024'))
   end
 end
