@@ -5,59 +5,44 @@ require './flight_data_service'
 
 ARRIVAL_RESPONSE = %w[S s sim Sim SIM].freeze
 
-origin_airport = ''
-destination_airport = ''
-departure_time = ''
-arrival_time = ''
+origin_airport = nil
+destination_airport = nil
+departure_time = nil
+arrival_time = nil
+
+def airport(type_airport)
+  puts "\n- Qual é o aeroporto de #{type_airport}? [Formato: abreviado com 3 letras, por exemplo: GRU]"
+  gets.chomp
+end
+
+def date(type_date)
+  puts "\n- Qual a data que deseja #{type_date}? [Formato: dd/mm/aaaa]"
+  gets.chomp
+end
 
 puts '==========================================='
 puts '   Projeto de Companhia Aérea - Rebase'
 
-while origin_airport.empty?
-  puts "\n- Qual é o aeroporto de origem? [Formato: abreviado com 3 letras, por exemplo: GRU]"
-  origin = gets.chomp
-  origin_airport = FlightValidatorService.execute(origin).valid_airport
+origin_airport = FlightValidatorService.execute(airport('partida')).valid_airport while origin_airport.nil?
+
+while destination_airport.nil?
+  destination_airport = FlightValidatorService.execute(airport('destino')).valid_airport(origin_airport)
 end
 
-while destination_airport.empty?
-  puts "\n- Qual é o aeroporto de destino? [Formato: abreviado com 3 letras, por exemplo: GRU]"
-  destination = gets.chomp
-  destination_airport = FlightValidatorService.execute(destination).valid_airport(origin)
-end
-
-while departure_time.empty?
-  puts "\n- Qual a data que deseja partir? [Formato: dd/mm/aaaa]"
-  date = gets.chomp
-  departure_time = FlightValidatorService.execute(date).valid_date
-end
+departure_time = FlightValidatorService.execute(date('partir')).valid_date while departure_time.nil?
 
 puts "\n- Deseja informar a data de retorno? S/N"
 arrival = gets.chomp
 
 if ARRIVAL_RESPONSE.include?(arrival)
-  while arrival_time.empty?
-    puts "\n- Qual será a data de retorno? [Formato: dd/mm/aaaa]"
-    date = gets.chomp
-    arrival_time = FlightValidatorService.execute(date).valid_date(departure_time)
-  end
+  arrival_time = FlightValidatorService.execute(date('retornar')).valid_date(departure_time) while arrival_time.nil?
 end
 
-if ARRIVAL_RESPONSE.include?(arrival)
-  FlightDataService.execute(
-    {
-      origin_airport: origin_airport,
-      destination_airport: destination_airport,
-      departure_time: departure_time,
-      arrival_time: arrival_time
-    }
-  ).flight_itineraries
-else
-  FlightDataService.execute(
-    {
-      origin_airport: origin_airport,
-      destination_airport: destination_airport,
-      departure_time: departure_time,
-      arrival_time: nil
-    }
-  ).flight_itineraries
-end
+FlightDataService.execute(
+  {
+    origin_airport: origin_airport,
+    destination_airport: destination_airport,
+    departure_time: departure_time,
+    arrival_time: arrival_time
+  }
+).flight_itineraries

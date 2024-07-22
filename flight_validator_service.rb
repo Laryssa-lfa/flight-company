@@ -14,14 +14,14 @@ class FlightValidatorService
     new(arg)
   end
 
-  def valid_airport(origin = nil)
-    return '' unless airport_validation(origin)
+  def valid_airport(origin_airport = nil)
+    return unless airport_validation(origin_airport)
 
     arg
   end
 
   def valid_date(departure_date = nil)
-    return '' unless date_validation(departure_date)
+    return unless date_validation(departure_date)
 
     arg
   end
@@ -30,10 +30,10 @@ class FlightValidatorService
 
   AIRPORTS = File.read('airports.json')
 
-  def airport_validation(origin)
+  def airport_validation(origin_airport)
     if !arg.match?(/^[a-zA-Z]{3}$/)
       puts '=> Na resposta deve conter apenas 3 letras sem caracteres especiais.'
-    elsif arg.eql?(origin)
+    elsif arg.eql?(origin_airport)
       puts '=> Aeroporto de destino não pode ser o mesmo de origem.'
     elsif AIRPORTS.include?(arg.upcase)
       true
