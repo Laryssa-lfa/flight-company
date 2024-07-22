@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test/unit'
+require 'test/unit/util/output'
 require 'minitest/mock'
 require 'date'
 require './flight_validator_service'
@@ -19,6 +20,14 @@ class FlightCompanyTest < Test::Unit::TestCase
 
   def valid_date_service(departure_time, date = nil)
     FlightValidatorService.execute(departure_time).valid_date(date)
+  end
+
+  def capture_output_airport(origin_airport, destination_airport = nil)
+    capture_output { valid_airport_service(origin_airport, destination_airport) }
+  end
+
+  def capture_output_date(departure_time, arrival_date = nil)
+    capture_output { valid_date_service(departure_time, arrival_date) }
   end
 
   def data_flight(arrival_time = nil)
@@ -40,6 +49,14 @@ class FlightCompanyTest < Test::Unit::TestCase
     assert_nil(valid_airport_service('jpa', 'jpa'))
   end
 
+  def test_get_message_text_validation
+    assert_include(capture_output_airport('jpa', 'jpa'), "=> Aeroporto de destino não pode ser o mesmo de origem.\n")
+    assert_include(capture_output_airport('xxx'), "=> Aeroporto não existe.\n")
+    assert_include(
+      capture_output_airport('jp3'), "=> Na resposta deve conter apenas 3 letras sem caracteres especiais.\n"
+    )
+  end
+
   def test_departure_date_validation
     assert_equal(@initial_date, valid_date_service(@initial_date))
     assert_nil(valid_date_service(@past_date))
@@ -55,6 +72,13 @@ class FlightCompanyTest < Test::Unit::TestCase
     assert_nil(valid_date_service('13-07-2024'))
     assert_nil(valid_date_service('13/2/2024'))
     assert_nil(valid_date_service('31/06/2024'))
+  end
+
+  def test_get_message_date_validation
+    assert_include(capture_output_date(@past_date), "=> A data deve ser maior que hoje.\n")
+    assert_include(capture_output_date('31/06/2024'), "=> Insira uma data válida.\n")
+    assert_include(capture_output_date('13-07-2024'), "=> Insira uma data válida e no formato dd/mm/aaaa.\n")
+    assert_include(capture_output_date(@past_date, @initial_date), "=> A data deve ser maior que o dia da partida.\n")
   end
 
   def test_itinerary_flight
