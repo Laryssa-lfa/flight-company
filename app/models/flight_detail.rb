@@ -1,3 +1,3 @@
 class FlightDetail < ApplicationRecord
-  belongs_to :connections, class_name: "FlightDetail", optional: true
+  has_many :flights, through: :connections
 end
