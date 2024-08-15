@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_141801) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_15_192308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,15 +19,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_141801) do
     t.string "destiny"
     t.string "origin_airport"
     t.string "destination_airport"
-    t.datetime "departure_time"
-    t.datetime "arrival_time"
     t.integer "flight_number"
     t.string "name_airline"
-    t.bigint "flight_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "connection_id"
-    t.index ["flight_id"], name: "index_flight_details_on_flight_id"
+    t.string "arrival_time"
+    t.string "departure_time"
   end
 
   create_table "flights", force: :cascade do |t|
@@ -47,6 +45,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_141801) do
     t.index ["flight_id"], name: "index_prices_on_flight_id"
   end
 
-  add_foreign_key "flight_details", "flights"
+  create_table "related_connections", force: :cascade do |t|
+    t.bigint "flight_detail_id", null: false
+    t.bigint "flight_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["flight_detail_id"], name: "index_related_connections_on_flight_detail_id"
+    t.index ["flight_id"], name: "index_related_connections_on_flight_id"
+  end
+
   add_foreign_key "prices", "flights"
+  add_foreign_key "related_connections", "flight_details"
+  add_foreign_key "related_connections", "flights"
 end

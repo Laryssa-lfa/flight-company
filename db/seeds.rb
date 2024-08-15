@@ -25,8 +25,7 @@ Price.find_or_create_by!({
 })
 
 # Flight details the flights
-FlightDetail.find_or_create_by!({
-  flight_id: flight.id,
+detail_economic = FlightDetail.find_or_create_by!({
   origin: 'João Pessoa',
   destiny: 'São Paulo',
   origin_airport: 'JPA',
@@ -38,7 +37,6 @@ FlightDetail.find_or_create_by!({
   connection_id: nil
 })
 detail_executive = FlightDetail.find_or_create_by!({
-  flight_id: executive_flight.id,
   origin: 'João Pessoa',
   destiny: 'Belo Horizonte',
   origin_airport: 'JPA',
@@ -50,7 +48,6 @@ detail_executive = FlightDetail.find_or_create_by!({
   connection_id: nil
 })
 detail_first_class = FlightDetail.find_or_create_by!({
-  flight_id: first_class_flight.id,
   origin: 'João Pessoa',
   destiny: 'Madrid',
   origin_airport: 'JPA',
@@ -62,10 +59,20 @@ detail_first_class = FlightDetail.find_or_create_by!({
   connection_id: nil
 })
 
+# Related connection between Flights and Flight details
+RelatedConnection.find_or_create_by!(
+  flight_id: flight.id, flight_detail_id: detail_economic.id
+)
+RelatedConnection.find_or_create_by!(
+  flight_id: executive_flight.id, flight_detail_id: detail_executive.id
+)
+RelatedConnection.find_or_create_by!(
+  flight_id: first_class_flight.id, flight_detail_id: detail_first_class.id
+)
+
 # Connections the flight details
 detail_executive_connection1 = FlightDetail.find_or_create_by!(
   {
-    flight_id: executive_flight.id,
     origin: 'João Pessoa',
     destiny: 'São Paulo',
     origin_airport: 'JPA',
@@ -79,7 +86,6 @@ detail_executive_connection1 = FlightDetail.find_or_create_by!(
 )
 detail_executive_connection2 = FlightDetail.find_or_create_by!(
   {
-    flight_id: executive_flight.id,
     origin: 'São Paulo',
     destiny: 'Belo Horizonte',
     origin_airport: 'GRU',
@@ -93,7 +99,6 @@ detail_executive_connection2 = FlightDetail.find_or_create_by!(
 )
 detail_first_class_connection1 = FlightDetail.find_or_create_by!(
   {
-    flight_id: first_class_flight.id,
     origin: 'João Pessoa',
     destiny: 'São Paulo',
     origin_airport: 'JPA',
@@ -107,7 +112,6 @@ detail_first_class_connection1 = FlightDetail.find_or_create_by!(
 )
 detail_first_class_connection2 = FlightDetail.find_or_create_by!(
   {
-    flight_id: first_class_flight.id,
     origin: 'São Paulo',
     destiny: 'Madrid',
     origin_airport: 'GRU',
