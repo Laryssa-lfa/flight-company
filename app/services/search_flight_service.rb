@@ -26,7 +26,7 @@ class SearchFlightService
   end
 
   def search_flights(itineraries)
-    itineraries.map(&:flights).first
+    itineraries.map(&:flights).first.uniq
   end
 
   def build_itineraries

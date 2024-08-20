@@ -26,7 +26,6 @@ Price.find_or_create_by!({
 
 # Flight details the flights
 detail_economic = FlightDetail.find_or_create_by!({
-  flight_id: flight.id,
   origin: 'João Pessoa',
   destiny: 'São Paulo',
   origin_airport: 'JPA',
@@ -34,11 +33,9 @@ detail_economic = FlightDetail.find_or_create_by!({
   departure_time: Date.today,
   arrival_time: (Date.today + 3),
   flight_number: '1313',
-  name_airline: 'Rebase Airlines',
-  connection_id: nil
+  name_airline: 'Rebase Airlines'
 })
 detail_executive = FlightDetail.find_or_create_by!({
-  flight_id: executive_flight.id,
   origin: 'João Pessoa',
   destiny: 'Belo Horizonte',
   origin_airport: 'JPA',
@@ -46,11 +43,9 @@ detail_executive = FlightDetail.find_or_create_by!({
   departure_time: Date.today,
   arrival_time: (Date.today + 5),
   flight_number: '1313',
-  name_airline: 'Rebase Airlines',
-  connection_id: nil
+  name_airline: 'Rebase Airlines'
 })
 detail_first_class = FlightDetail.find_or_create_by!({
-  flight_id: first_class_flight.id,
   origin: 'João Pessoa',
   destiny: 'Madrid',
   origin_airport: 'JPA',
@@ -58,8 +53,7 @@ detail_first_class = FlightDetail.find_or_create_by!({
   departure_time: Date.today,
   arrival_time: (Date.today + 10),
   flight_number: '1313',
-  name_airline: 'International Airlines',
-  connection_id: nil
+  name_airline: 'International Airlines'
 })
 
 # Related connection between Flights and Flight details
@@ -76,7 +70,6 @@ RelatedConnection.find_or_create_by!(
 # Connections the flight details
 connection1_detail_executive = FlightDetail.find_or_create_by!(
   {
-    flight_id: executive_flight.id,
     origin: 'João Pessoa',
     destiny: 'São Paulo',
     origin_airport: 'JPA',
@@ -84,13 +77,11 @@ connection1_detail_executive = FlightDetail.find_or_create_by!(
     departure_time: Date.today,
     arrival_time: Date.today,
     flight_number: '1310',
-    name_airline: 'Rebase Airlines',
-    connection_id: detail_executive.id
+    name_airline: 'Rebase Airlines'
   }
 )
 connection2_detail_executive = FlightDetail.find_or_create_by!(
   {
-    flight_id: executive_flight.id,
     origin: 'São Paulo',
     destiny: 'Belo Horizonte',
     origin_airport: 'GRU',
@@ -98,13 +89,11 @@ connection2_detail_executive = FlightDetail.find_or_create_by!(
     departure_time: Date.today,
     arrival_time: Date.today,
     flight_number: '1010',
-    name_airline: 'Rebase Airlines',
-    connection_id: detail_executive.id
+    name_airline: 'Rebase Airlines'
   }
 )
 connection1_detail_first_class = FlightDetail.find_or_create_by!(
   {
-    flight_id: first_class_flight.id,
     origin: 'João Pessoa',
     destiny: 'São Paulo',
     origin_airport: 'JPA',
@@ -112,13 +101,11 @@ connection1_detail_first_class = FlightDetail.find_or_create_by!(
     departure_time: Date.today,
     arrival_time: Date.today,
     flight_number: '1310',
-    name_airline: 'Rebase Airlines',
-    connection_id: detail_first_class.id
+    name_airline: 'Rebase Airlines'
   }
 )
 connection2_detail_first_class = FlightDetail.find_or_create_by!(
   {
-    flight_id: first_class_flight.id,
     origin: 'São Paulo',
     destiny: 'Madrid',
     origin_airport: 'GRU',
@@ -126,7 +113,6 @@ connection2_detail_first_class = FlightDetail.find_or_create_by!(
     departure_time: Date.today,
     arrival_time: (Date.today + 1),
     flight_number: '753',
-    name_airline: 'International Airlines',
-    connection_id: detail_first_class.id
+    name_airline: 'International Airlines'
   }
 )
