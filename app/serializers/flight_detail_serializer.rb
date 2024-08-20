@@ -2,9 +2,7 @@ class FlightDetailSerializer < ActiveModel::Serializer
   attributes :origin,
              :destiny,
              :origin_airport,
-             :destination_airport,
-             :flight_number,
-             :name_airline
+             :destination_airport
 
   attribute :departure_time do
     object.departure_time
@@ -21,7 +19,7 @@ class FlightDetailSerializer < ActiveModel::Serializer
   private
 
   def find_connections
-    connections = FlightDetail.where(connection_id: object.id)
+    connections = FlightDetail.where(connection_id: object.id, flight_id: @instance_options[:flight_id])
     connections.map do |connection|
       connection_data(connection)
     end

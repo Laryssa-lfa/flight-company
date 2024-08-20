@@ -7,7 +7,7 @@ class FlightSerializer < ActiveModel::Serializer
 
   attribute :flight_details do
     object.flight_details.map do |obj|
-      FlightDetailSerializer.new(obj)
+      FlightDetailSerializer.new(obj, flight_id: object.id)
     end
   end
 end
