@@ -20,13 +20,15 @@ class SearchFlightService
     itineraries = FlightDetail.where(
       origin_airport: arg[:origin_airport],
       destination_airport: arg[:destination_airport]
-    ).where("departure_time LIKE ?", arg[:departure_time] + "%")
+    ).where("departure_time LIKE ?", format_date_bd(arg[:departure_time]))
 
     itineraries.any? ? search_flights(itineraries) : build_itineraries
   end
 
   def search_flights(itineraries)
-    itineraries.map(&:flights).first.uniq
+    itineraries.map do |itinerary|
+      itinerary.flights.first
+    end
   end
 
   def build_itineraries
@@ -41,6 +43,10 @@ class SearchFlightService
     return WITHOUT_FLIGHT.to_json if !response[:status] || response[:data][:itineraries].empty?
 
     FlightDataService.execute(response[:data][:itineraries], arg[:fare_category])
+  end
+
+  def format_date_bd(date)
+    "#{DateTime.parse(date).strftime('%d/%m/%Y')}%" unless date.nil?
   end
 
   def format_date(date)

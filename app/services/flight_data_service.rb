@@ -9,8 +9,8 @@ class FlightDataService
   end
 
   def flight_datas
-    arg.map do |obj|
-      build_data(obj)
+    arg.map do |itinerary|
+      build_data(itinerary)
     end
   end
 
@@ -36,8 +36,8 @@ class FlightDataService
   end
 
   def itineraries(flight_id, legs)
-    legs.each_with_index do |leg, index|
-      flight_detail = build_flight_detail(leg, index)
+    legs.each do |leg|
+      flight_detail = build_flight_detail(leg)
       RelatedConnection.find_or_create_by!(
         flight_id: flight_id,
         flight_detail_id: flight_detail.id
@@ -46,7 +46,7 @@ class FlightDataService
     end
   end
 
-  def build_flight_detail(obj, index = nil, flight_detail_id = nil)
+  def build_flight_detail(obj, flight_detail_id = nil)
     FlightDetail.find_or_create_by!({
       origin: obj.dig(:origin, :name),
       destiny: obj.dig(:destination, :name),
@@ -54,22 +54,22 @@ class FlightDataService
       destination_airport: obj.dig(:destination, :displayCode),
       departure_time: format_date(obj[:departure]),
       arrival_time: format_date(obj[:arrival]),
-      flight_number: save_flight_number(obj, index),
-      name_airline: save_name_airline(obj, index)
+      flight_number: save_flight_number(obj),
+      name_airline: save_name_airline(obj)
     })
   end
 
-  def save_flight_number(obj, index)
+  def save_flight_number(obj)
     if has_segments?(obj) && obj[:stopCount] == 0
-      obj.dig(:segments, index, :flightNumber)
+      obj.dig(:segments, 0, :flightNumber)
     elsif !has_segments?(obj)
       obj.dig(:flightNumber)
     end
   end
 
-  def save_name_airline(obj, index)
+  def save_name_airline(obj)
     if has_segments?(obj) && obj[:stopCount] == 0
-      obj.dig(:segments, index, :operatingCarrier, :name)
+      obj.dig(:segments, 0, :operatingCarrier, :name)
     elsif !has_segments?(obj)
       obj.dig(:operatingCarrier, :name)
     end
@@ -77,7 +77,7 @@ class FlightDataService
 
   def build_connections(segments, flight_id, flight_detail_id)
     segments.each do |segment|
-      flight_segment = build_flight_detail(segment, nil, flight_detail_id)
+      flight_segment = build_flight_detail(segment, flight_detail_id)
       RelatedConnection.find_or_create_by!(
         flight_id: flight_id,
         flight_detail_id: flight_detail_id,

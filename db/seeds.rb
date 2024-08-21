@@ -58,13 +58,13 @@ detail_first_class = FlightDetail.find_or_create_by!({
 
 # Related connection between Flights and Flight details
 RelatedConnection.find_or_create_by!(
-  flight_id: flight.id, flight_detail_id: detail_economic.id
+  flight_id: flight.id, flight_detail_id: detail_economic.id, connection_id: nil
 )
 RelatedConnection.find_or_create_by!(
-  flight_id: executive_flight.id, flight_detail_id: detail_executive.id
+  flight_id: executive_flight.id, flight_detail_id: detail_executive.id, connection_id: nil
 )
 RelatedConnection.find_or_create_by!(
-  flight_id: first_class_flight.id, flight_detail_id: detail_first_class.id
+  flight_id: first_class_flight.id, flight_detail_id: detail_first_class.id, connection_id: nil
 )
 
 # Connections the flight details
@@ -115,4 +115,18 @@ connection2_detail_first_class = FlightDetail.find_or_create_by!(
     flight_number: '753',
     name_airline: 'International Airlines'
   }
+)
+
+# Related connection between Flights, Flight details and connections the Flight details
+RelatedConnection.find_or_create_by!(
+  flight_id: flight.id, flight_detail_id: detail_executive.id, connection_id: connection1_detail_executive.id
+)
+RelatedConnection.find_or_create_by!(
+  flight_id: flight.id, flight_detail_id: detail_executive.id, connection_id: connection2_detail_executive.id
+)
+RelatedConnection.find_or_create_by!(
+  flight_id: executive_flight.id, flight_detail_id: detail_first_class.id, connection_id: connection1_detail_first_class.id
+)
+RelatedConnection.find_or_create_by!(
+  flight_id: first_class_flight.id, flight_detail_id: detail_first_class.id, connection_id: connection2_detail_first_class.id
 )
