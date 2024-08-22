@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlightSerializer < ActiveModel::Serializer
   attribute :fare_category
 

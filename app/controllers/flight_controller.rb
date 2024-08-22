@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlightController < ApplicationController
   def search
     flights = SearchFlightService.execute(permitted_params)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlightDetailSerializer < ActiveModel::Serializer
   attributes :origin,
              :destiny,
@@ -9,7 +11,7 @@ class FlightDetailSerializer < ActiveModel::Serializer
   attribute :departure_time do
     object.departure_time
   end
-  
+
   attribute :arrival_time do
     object.arrival_time
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SearchFlightService
   def initialize(arg)
     @arg = arg
@@ -14,13 +16,14 @@ class SearchFlightService
   private
 
   attr_reader :arg
-  WITHOUT_FLIGHT = 'Temporariamente sem opções de voos!'.freeze
+
+  WITHOUT_FLIGHT = 'Temporariamente sem opções de voos!'
 
   def search_itineraries
     itineraries = FlightDetail.where(
       origin_airport: arg[:origin_airport],
       destination_airport: arg[:destination_airport]
-    ).where("departure_time LIKE ?", format_date_bd(arg[:departure_time]))
+    ).where('departure_time LIKE ?', format_date_bd(arg[:departure_time]))
 
     itineraries.any? ? search_flights(itineraries) : build_itineraries
   end

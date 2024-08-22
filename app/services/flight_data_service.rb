@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlightDataService
   def initialize(arg, fare_category)
     @arg = arg
@@ -42,11 +44,11 @@ class FlightDataService
         flight_id: flight_id,
         flight_detail_id: flight_detail.id
       )
-      build_connections(leg[:segments], flight_id, flight_detail.id) if leg[:stopCount] > 0
+      build_connections(leg[:segments], flight_id, flight_detail.id) if (leg[:stopCount]).positive?
     end
   end
 
-  def build_flight_detail(obj, flight_detail_id = nil)
+  def build_flight_detail(obj)
     FlightDetail.find_or_create_by!({
       origin: obj.dig(:origin, :name),
       destiny: obj.dig(:destination, :name),
@@ -60,24 +62,24 @@ class FlightDataService
   end
 
   def save_flight_number(obj)
-    if has_segments?(obj) && obj[:stopCount] == 0
+    if one_way_trip?(obj)
       obj.dig(:segments, 0, :flightNumber)
-    elsif !has_segments?(obj)
-      obj.dig(:flightNumber)
+    elsif !segments?(obj)
+      obj[:flightNumber]
     end
   end
 
   def save_name_airline(obj)
-    if has_segments?(obj) && obj[:stopCount] == 0
+    if one_way_trip?(obj)
       obj.dig(:segments, 0, :operatingCarrier, :name)
-    elsif !has_segments?(obj)
+    elsif !segments?(obj)
       obj.dig(:operatingCarrier, :name)
     end
   end
 
   def build_connections(segments, flight_id, flight_detail_id)
     segments.each do |segment|
-      flight_segment = build_flight_detail(segment, flight_detail_id)
+      flight_segment = build_flight_detail(segment)
       RelatedConnection.find_or_create_by!(
         flight_id: flight_id,
         flight_detail_id: flight_detail_id,
@@ -90,7 +92,11 @@ class FlightDataService
     DateTime.parse(date).strftime('%d/%m/%Y - %H:%M:%S')
   end
 
-  def has_segments?(obj)
+  def one_way_trip?(obj)
+    segments?(obj) && (obj[:stopCount]).zero?
+  end
+
+  def segments?(obj)
     obj[:segments].present?
   end
 end
