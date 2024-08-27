@@ -12,7 +12,6 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     networks:
-      - flight_company
       - app
   app:
     build: .
@@ -28,7 +27,6 @@ services:
       - .:/app
       - rubygems:/usr/local/bundle
     networks:
-      - flight_company
       - app
 
 volumes:
@@ -36,7 +34,5 @@ volumes:
   db:
 
 networks:
-  flight_company:
-    external: true
   app:
     external: false
