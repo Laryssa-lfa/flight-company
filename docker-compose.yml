@@ -11,28 +11,20 @@ services:
       - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
-    networks:
-      - app
+
   app:
     build: .
     working_dir: /app
     container_name: app
     env_file: .env
     depends_on:
-      postgres:
-        condition: service_started
+      - postgres
     ports:
       - 3000:3000
     volumes:
       - .:/app
       - rubygems:/usr/local/bundle
-    networks:
-      - app
 
 volumes:
   rubygems:
   db:
-
-networks:
-  app:
-    external: false

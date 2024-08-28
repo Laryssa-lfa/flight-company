@@ -7,7 +7,7 @@ start: ## run app service given a port, ex: make start port=3000
 		--rm \
 		-p ${port}:${port} \
 		app \
-		bash -c "bundle exec rails s -p ${port} --binding 0.0.0.0"
+		bash -c "bin/setup && bundle exec rails s -p ${port} --binding 0.0.0.0"
 
 bash: ## run bash app
 	@docker-compose run \
