@@ -18,15 +18,14 @@ class RequestHttpService
   attr_reader :url
 
   def request_http
-    # http = Net::HTTP.new(url.host, url.port)
-    # http.use_ssl = true
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
 
-    # request = Net::HTTP::Get.new(url)
-    # request['x-rapidapi-key'] = ENV.fetch('KEY_API')
-    # request['x-rapidapi-host'] = ENV.fetch('HOST_API')
+    request = Net::HTTP::Get.new(url)
+    request['x-rapidapi-key'] = ENV.fetch('KEY_API')
+    request['x-rapidapi-host'] = ENV.fetch('HOST_API')
 
-    # result = http.request(request).read_body
-    # JSON.parse(result, symbolize_names: true)
-    JSON.parse(File.read('./flights2.json'), symbolize_names: true)
+    result = http.request(request).read_body
+    JSON.parse(result, symbolize_names: true)
   end
 end

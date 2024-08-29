@@ -33,7 +33,6 @@ class AirportsService
   end
 
   def all_airports
-    # RequestHttpService.request("#{ENV.fetch('URL_API')}/airports")
-    JSON.parse(File.read('./airports.json'), symbolize_names: true)
+    RequestHttpService.request("#{ENV.fetch('URL_API')}/airports")
   end
 end
