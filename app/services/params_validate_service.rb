@@ -32,26 +32,29 @@ class ParamsValidateService
   end
 
   def origin_airport_valid
-    return message_error_present('origin_airport') unless origin_airport.present?
+    return message_error_present('origin_airport') if origin_airport.blank?
     return message_error_format('origin_airport') unless origin_airport.match?(/\A[a-zA-Z]{3}\z/)
-    return message_error_not_exist(origin_airport) unless exist_airport(origin_airport)
+
+    message_error_not_exist(origin_airport) unless exist_airport(origin_airport)
   end
 
   def destination_airport_valid
-    return message_error_present('destination_airport') unless destination_airport.present?
+    return message_error_present('destination_airport') if destination_airport.blank?
     return message_error_format('destination_airport') unless destination_airport.match?(/\A[a-zA-Z]{3}\z/)
     return MESSAGE_ERROR[:airport] if origin_airport.eql?(destination_airport)
-    return message_error_not_exist(destination_airport) unless exist_airport(destination_airport)
+
+    message_error_not_exist(destination_airport) unless exist_airport(destination_airport)
   end
 
   def dates_valid
-    return message_error_present('departure_time') unless departure_date.present?
-    return MESSAGE_ERROR[:today] if Date.parse(departure_date) < Date.today
+    return message_error_present('departure_time') if departure_date.blank?
+    return MESSAGE_ERROR[:today] if Date.parse(departure_date) < Time.zone.today
+
     arrival_date_valid if arrival_date.present?
   end
 
   def arrival_date_valid
-    return MESSAGE_ERROR[:less_than] if Date.parse(arrival_date) < Date.parse(departure_date)
+    MESSAGE_ERROR[:less_than] if Date.parse(arrival_date) < Date.parse(departure_date)
   end
 
   def exist_airport(airport)

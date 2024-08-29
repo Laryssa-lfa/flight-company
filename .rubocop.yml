@@ -3,6 +3,7 @@ require: rubocop-rails
 AllCops:
   TargetRubyVersion: 3.3.4
   NewCops: enable
+  SuggestExtensions: false
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'
@@ -34,13 +35,23 @@ Layout/LineLength:
 
 Metrics/AbcSize:
   Max: 20
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
 
 Metrics/ClassLength:
   CountAsOne: ['array', 'method_call']
   Max: 100
+  Exclude:
+  - 'spec/**/*'
 
 Metrics/MethodLength:
   Max: 15
+  Exclude:
+    - 'spec/**/*'
 
 Style/Documentation:
   Enabled: false

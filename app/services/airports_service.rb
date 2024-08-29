@@ -1,4 +1,4 @@
-# frozen_string_literal
+# frozen_string_literal: true
 
 class AirportsService
   def initialize(airport)
@@ -19,7 +19,7 @@ class AirportsService
 
   def find_or_create_airport
     save_airports if Airport.count.zero?
-    return true if Airport.find_by(iata: airport)
+    true if Airport.find_by(iata: airport)
   end
 
   def save_airports
