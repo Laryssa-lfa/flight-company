@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateAirports < ActiveRecord::Migration[7.1]
+class CreateAirport < ActiveRecord::Migration[7.1]
   def change
     create_table :airports do |t|
       t.string :iata

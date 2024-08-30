@@ -1,4 +1,6 @@
-class CreatePrices < ActiveRecord::Migration[7.1]
+# frozen_string_literal: true
+
+class CreatePrice < ActiveRecord::Migration[7.1]
   def change
     create_table :prices do |t|
       t.integer :air_miles

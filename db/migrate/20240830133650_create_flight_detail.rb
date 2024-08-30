@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateFlightDetail < ActiveRecord::Migration[7.1]
   def change
     create_table :flight_details do |t|
@@ -5,12 +7,10 @@ class CreateFlightDetail < ActiveRecord::Migration[7.1]
       t.string :destiny
       t.string :origin_airport
       t.string :destination_airport
-      t.datetime :departure_time
-      t.datetime :arrival_time
-      t.string :seat_number
       t.integer :flight_number
       t.string :name_airline
-      t.references :flight, null: false, foreign_key: true
+      t.string :departure_time
+      t.string :arrival_time
 
       t.timestamps
     end
