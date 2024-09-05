@@ -14,20 +14,21 @@ RSpec.describe 'Flights', type: :request do
     let(:payload) { build_payload('JPA', 'GRU', departure_date) }
     let(:flights) { create_list(:flight, 2) }
     let(:flight_detail) do
-      create_list( :flight_detail, 2,
-                   departure_time: departure_date.strftime('%d/%m/%Y - %H:%M:%S')
+      create_list(
+        :flight_detail, 2,
+        departure_time: departure_date.strftime('%d/%m/%Y - %H:%M:%S')
       )
     end
 
     before do
-      0..2.times do |index|
+      0..(2.times do |index|
         create(:price, flight_id: flights[index].id)
         create(
           :related_connection,
           flight_id: flights[index].id,
           flight_detail_id: flight_detail[index].id
         )
-      end
+      end)
     end
 
     it 'return flights list' do
@@ -76,7 +77,8 @@ RSpec.describe 'Flights', type: :request do
     let(:payload) { build_payload('JPA', 'GRU', departure_date) }
     let(:api_response) { { data: { itineraries: [] }, status: true } }
     let(:url) do
-      URI("#{ENV.fetch('URL_API')}/search-one-way?cabinClass=economy&departDate=" \
+      URI(
+        "#{ENV.fetch('URL_API')}/search-one-way?cabinClass=economy&departDate=" \
         "#{1.day.from_now.strftime('%Y-%m-%d')}&fromEntityId=JPA&returnDate=&toEntityId=GRU"
       )
     end
@@ -163,7 +165,7 @@ RSpec.describe 'Flights', type: :request do
           origin_airport: 'JPA',
           destination_airport: 'GRU',
           departure_time: departure_date.strftime('%d/%m/%Y'),
-          arrival_time: (-2.day.from_now).to_s
+          arrival_time: -2.days.from_now.to_s
         }
       end
 

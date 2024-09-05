@@ -6,15 +6,9 @@ class FlightDetailSerializer < ActiveModel::Serializer
              :origin_airport,
              :destination_airport,
              :flight_number,
-             :name_airline
-
-  attribute :departure_time do
-    object.departure_time
-  end
-
-  attribute :arrival_time do
-    object.arrival_time
-  end
+             :name_airline,
+             :departure_time,
+             :arrival_time
 
   attribute :connections do
     find_connections

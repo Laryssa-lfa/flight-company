@@ -86,7 +86,7 @@ RSpec.describe FlightSerializer do
                 flight_number: connection.flight_number,
                 name_airline: connection.name_airline,
                 departure_time: connection.departure_time,
-                arrival_time: connection.arrival_time,
+                arrival_time: connection.arrival_time
               ]
             }]
           })

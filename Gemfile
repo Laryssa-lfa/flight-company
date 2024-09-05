@@ -16,6 +16,9 @@ group :development, :test do
   gem 'debug', platforms: %i[mri windows]
   gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
   gem 'pry-byebug'
+end
+
+group :test do
   gem 'rspec-mocks', '~> 3.13', '>= 3.13.1'
   gem 'rspec-rails', '~> 6.1', '>= 6.1.4'
   gem 'shoulda-matchers', '~> 6.4'
