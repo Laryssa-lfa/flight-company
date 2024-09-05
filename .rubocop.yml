@@ -59,12 +59,15 @@ Style/Documentation:
 Style/BlockDelimiters:
   Enabled: true
 
-Style/HashSyntax:
-  EnforcedStyle: no_mixed_keys
-  EnforcedShorthandSyntax: never
-
 Style/FormatString:
   Enabled: false
 
 Style/FormatStringToken:
   EnforcedStyle: template
+
+Style/HashSyntax:
+  EnforcedStyle: no_mixed_keys
+  EnforcedShorthandSyntax: never
+
+Style/Lambda:
+  EnforcedStyle: literal

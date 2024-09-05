@@ -11,11 +11,11 @@ RSpec.describe FlightDetailSerializer do
       create(:airport)
       create(:airport, iata: 'GRU')
       create(
-          :related_connection,
-          flight_id: create(:flight).id,
-          flight_detail_id: flight_detail.id,
-          connection_id: connection_id
-        )
+        :related_connection,
+        flight_id: create(:flight).id,
+        flight_detail_id: flight_detail.id,
+        connection_id: connection_id
+      )
     end
 
     context 'without connections' do
@@ -60,7 +60,7 @@ RSpec.describe FlightDetailSerializer do
             flight_number: connection.flight_number,
             name_airline: connection.name_airline,
             departure_time: connection.departure_time,
-            arrival_time: connection.arrival_time,
+            arrival_time: connection.arrival_time
           ]
         })
       end
