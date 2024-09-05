@@ -8,7 +8,7 @@ RSpec.describe FlightSerializer do
     let(:response) { FlightSerializer.new(flight).serializable_hash }
 
     it 'with success the flight' do
-      expect(response).to eq({
+      expect(response).to match({
         fare_category: flight.fare_category,
         price: nil,
         flight_details: []
@@ -19,7 +19,7 @@ RSpec.describe FlightSerializer do
       let!(:price) { create(:price, flight_id: flight.id) }
 
       it 'build with success' do
-        expect(response).to eq({
+        expect(response).to match({
           fare_category: flight.fare_category,
           price: flight.price.formatted_price,
           flight_details: []
@@ -44,7 +44,7 @@ RSpec.describe FlightSerializer do
       end
 
       it 'build with success' do
-        expect(response).to eq({
+        expect(response).to match({
           fare_category: flight.fare_category,
           price: flight.price.formatted_price,
           flight_details: [{
@@ -66,7 +66,7 @@ RSpec.describe FlightSerializer do
         let(:connection_id) { connection.id }
 
         it 'build with success' do
-          expect(response).to eq({
+          expect(response).to match({
             fare_category: flight.fare_category,
             price: flight.price.formatted_price,
             flight_details: [{

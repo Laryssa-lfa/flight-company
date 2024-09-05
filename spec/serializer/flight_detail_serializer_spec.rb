@@ -22,7 +22,7 @@ RSpec.describe FlightDetailSerializer do
       it 'build with success' do
         response = FlightDetailSerializer.new(flight_detail).serializable_hash
 
-        expect(response).to eq({
+        expect(response).to match({
           origin: flight_detail.origin,
           destiny: flight_detail.destiny,
           origin_airport: flight_detail.origin_airport,
@@ -43,7 +43,7 @@ RSpec.describe FlightDetailSerializer do
       it 'build with success' do
         response = FlightDetailSerializer.new(flight_detail).serializable_hash
 
-        expect(response).to eq({
+        expect(response).to match({
           origin: flight_detail.origin,
           destiny: flight_detail.destiny,
           origin_airport: flight_detail.origin_airport,

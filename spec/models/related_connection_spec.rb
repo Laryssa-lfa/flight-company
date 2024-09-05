@@ -3,6 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe RelatedConnection, type: :model do
-  it { should belong_to(:flight) }
-  it { should belong_to(:flight_detail) }
+  it { is_expected.to belong_to(:flight) }
+  it { is_expected.to belong_to(:flight_detail) }
 end

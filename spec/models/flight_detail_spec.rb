@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe FlightDetail, type: :model do
-  it { should have_many(:related_connections) }
-  it { should have_many(:flights).through(:related_connections) }
+  it { is_expected.to have_many(:related_connections) }
+  it { is_expected.to have_many(:flights).through(:related_connections) }
 
   before do
     create(:airport)

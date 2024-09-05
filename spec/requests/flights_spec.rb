@@ -36,7 +36,7 @@ RSpec.describe 'Flights', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to include('application/json')
-      expect(response_body).to eq(
+      expect(response_body).to match(
         [
           {
             fare_category: flights[0].fare_category,
@@ -92,7 +92,7 @@ RSpec.describe 'Flights', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to include('application/json')
-      expect(response_body).to eq('Temporariamente sem opções de voos!')
+      expect(response_body).to match('Temporariamente sem opções de voos!')
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq('Destination airport é obrigatório!')
+        expect(response_body.first).to match('Destination airport é obrigatório!')
       end
     end
 
@@ -117,7 +117,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq(
+        expect(response_body.first).to match(
           'Origin airport é inválido! Deve conter apenas 3 letras sem caracteres especiais.'
         )
       end
@@ -131,7 +131,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq('Destination airport não pode ser o mesmo de origem.')
+        expect(response_body.first).to match('Destination airport não pode ser o mesmo de origem.')
       end
     end
 
@@ -143,7 +143,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq('Aeroporto xxx não existe.')
+        expect(response_body.first).to match('Aeroporto xxx não existe.')
       end
     end
 
@@ -155,7 +155,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq('A data deve ser maior que hoje.')
+        expect(response_body.first).to match('A data deve ser maior que hoje.')
       end
     end
 
@@ -174,7 +174,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body.first).to eq('A data de chegada não pode ser menor que a data de partida.')
+        expect(response_body.first).to match('A data de chegada não pode ser menor que a data de partida.')
       end
     end
   end
