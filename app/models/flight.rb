@@ -2,6 +2,8 @@
 
 class Flight < ApplicationRecord
   has_one :price, dependent: nil
+  delegate :formatted_price, to: :price, allow_nil: true
+
   has_many :related_connections, dependent: nil
   has_many :flight_details, through: :related_connections
 

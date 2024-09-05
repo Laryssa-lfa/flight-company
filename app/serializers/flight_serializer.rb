@@ -4,7 +4,7 @@ class FlightSerializer < ActiveModel::Serializer
   attribute :fare_category
 
   attribute :price do
-    object.price&.formatted_price
+    object&.formatted_price
   end
 
   attribute :flight_details do
