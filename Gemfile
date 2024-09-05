@@ -19,6 +19,7 @@ group :development, :test do
   gem 'rspec-mocks', '~> 3.13', '>= 3.13.1'
   gem 'rspec-rails', '~> 6.1', '>= 6.1.4'
   gem 'shoulda-matchers', '~> 6.4'
+  gem 'webmock', '~> 3.23', '>= 3.23.1'
 end
 
 group :development do

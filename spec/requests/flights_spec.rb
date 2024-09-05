@@ -3,33 +3,34 @@
 require 'rails_helper'
 
 RSpec.describe 'Flights', type: :request do
-  let(:payload) { build_payload('JPA', 'GRU', date_current) }
-  let(:flight) { FactoryBot.create_list(:flight, 2) }
-  let(:flight_detail) { FactoryBot.create_list(:flight_detail, 2) }
+  let(:departure_date) { 1.day.from_now }
 
   before do
-    0..(2.times do |index|
-      FactoryBot.create(:price, flight_id: flight[index].id)
-      FactoryBot.create(
-        :related_connection,
-        flight_id: flight[index].id,
-        flight_detail_id: flight_detail[index].id
-      )
-    end)
-
-    FactoryBot.create(:airport)
-    FactoryBot.create(
-      :airport,
-      iata: 'GRU',
-      name: 'São Paulo/Guarulhos–Governador André Franco Montoro International Airport',
-      location: 'São Paulo'
-    )
+    create(:airport)
+    create(:airport, iata: 'GRU')
   end
 
   context 'when flights are available' do
-    it 'return flights list' do
-      allow(SearchFlightService).to receive(:execute).and_return(flight)
+    let(:payload) { build_payload('JPA', 'GRU', departure_date) }
+    let(:flights) { create_list(:flight, 2) }
+    let(:flight_detail) do
+      create_list( :flight_detail, 2,
+                   departure_time: departure_date.strftime('%d/%m/%Y - %H:%M:%S')
+      )
+    end
 
+    before do
+      0..2.times do |index|
+        create(:price, flight_id: flights[index].id)
+        create(
+          :related_connection,
+          flight_id: flights[index].id,
+          flight_detail_id: flight_detail[index].id
+        )
+      end
+    end
+
+    it 'return flights list' do
       get '/flights/search', params: payload
 
       expect(response).to have_http_status(:ok)
@@ -37,8 +38,8 @@ RSpec.describe 'Flights', type: :request do
       expect(response_body).to eq(
         [
           {
-            fare_category: flight[0].fare_category,
-            price: flight[0].price.formatted_price,
+            fare_category: flights[0].fare_category,
+            price: flights[0].price.formatted_price,
             flight_details: [{
               origin: flight_detail[0].origin,
               destiny: flight_detail[0].destiny,
@@ -52,8 +53,8 @@ RSpec.describe 'Flights', type: :request do
             }]
           },
           {
-            fare_category: flight[1].fare_category,
-            price: flight[1].price.formatted_price,
+            fare_category: flights[1].fare_category,
+            price: flights[1].price.formatted_price,
             flight_details: [{
               origin: flight_detail[1].origin,
               destiny: flight_detail[1].destiny,
@@ -72,11 +73,19 @@ RSpec.describe 'Flights', type: :request do
   end
 
   context 'when there are no flights available' do
-    it 'returns a message' do
-      allow(SearchFlightService)
-        .to receive(:execute)
-        .and_return('Temporariamente sem opções de voos!'.to_json)
+    let(:payload) { build_payload('JPA', 'GRU', departure_date) }
+    let(:api_response) { { data: { itineraries: [] }, status: true } }
+    let(:url) do
+      URI("#{ENV.fetch('URL_API')}/search-one-way?cabinClass=economy&departDate=" \
+        "#{1.day.from_now.strftime('%Y-%m-%d')}&fromEntityId=JPA&returnDate=&toEntityId=GRU"
+      )
+    end
 
+    before do
+      stub_get_request(url: url, response: api_response)
+    end
+
+    it 'returns a message' do
       get '/flights/search', params: payload
 
       expect(response).to have_http_status(:ok)
@@ -87,64 +96,64 @@ RSpec.describe 'Flights', type: :request do
 
   context 'when the inputs are invalid' do
     context 'when not present' do
-      let(:payload) { { origin_airport: 'JPA', departure_time: date_current.to_s } }
+      let(:payload) { { origin_airport: 'JPA', departure_time: departure_date.strftime('%d/%m/%Y') } }
 
       it 'return the message' do
         get '/flights/search', params: payload
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq('Atributo `destination_airport` é obrigatório!')
+        expect(response_body.first).to eq('Destination airport é obrigatório!')
       end
     end
 
     context 'by the formation' do
-      let(:payload) { build_payload('A01', 'GRU', date_current) }
+      let(:payload) { build_payload('A01', 'GRU', departure_date) }
 
       it 'return the message' do
         get '/flights/search', params: payload
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq(
-          'Formato de `origin_airport` é inválido! Deve conter apenas 3 letras sem caracteres especiais.'
+        expect(response_body.first).to eq(
+          'Origin airport é inválido! Deve conter apenas 3 letras sem caracteres especiais.'
         )
       end
     end
 
     context 'when airport equals' do
-      let(:payload) { build_payload('GRU', 'GRU', date_current) }
+      let(:payload) { build_payload('GRU', 'GRU', departure_date) }
 
       it 'return the message' do
         get '/flights/search', params: payload
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq('Aeroporto de destino não pode ser o mesmo de origem.')
+        expect(response_body.first).to eq('Destination airport não pode ser o mesmo de origem.')
       end
     end
 
     context 'when airport not exist' do
-      let(:payload) { build_payload('xxx', 'GRU', date_current) }
+      let(:payload) { build_payload('xxx', 'GRU', departure_date) }
 
       it 'return the message' do
         get '/flights/search', params: payload
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq('Aeroporto `xxx` não existe.')
+        expect(response_body.first).to eq('Aeroporto xxx não existe.')
       end
     end
 
     context 'when the date old' do
-      let(:payload) { build_payload('JPA', 'GRU', date_current - 1) }
+      let(:payload) { build_payload('JPA', 'GRU', -1.day.from_now) }
 
       it 'return the message' do
         get '/flights/search', params: payload
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq('A data deve ser maior que hoje.')
+        expect(response_body.first).to eq('A data deve ser maior que hoje.')
       end
     end
 
@@ -153,8 +162,8 @@ RSpec.describe 'Flights', type: :request do
         {
           origin_airport: 'JPA',
           destination_airport: 'GRU',
-          departure_time: date_current.to_s,
-          arrival_time: (date_current - 2).to_s
+          departure_time: departure_date.strftime('%d/%m/%Y'),
+          arrival_time: (-2.day.from_now).to_s
         }
       end
 
@@ -163,7 +172,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to eq('A data de chegada não pode ser menor que a data de partida.')
+        expect(response_body.first).to eq('A data de chegada não pode ser menor que a data de partida.')
       end
     end
   end
@@ -174,11 +183,7 @@ RSpec.describe 'Flights', type: :request do
     {
       origin_airport: origin_airport.to_s,
       destination_airport: destination_airport.to_s,
-      departure_time: date.strftime('%d/%m/%Y').to_s
+      departure_time: date.strftime('%d/%m/%Y')
     }
-  end
-
-  def date_current
-    DateTime.current
   end
 end

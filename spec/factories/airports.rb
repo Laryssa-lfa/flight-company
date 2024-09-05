@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :airport do
     iata { 'JPA' }
-    name { 'Presidente Castro Pinto International Airport' }
+    name { 'International Airport' }
     location { 'João Pessoa' }
   end
 end

@@ -3,6 +3,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 require 'helpers/request_helper'
+require 'helpers/stub_helper'
 
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
@@ -72,6 +73,8 @@ RSpec.configure do |config|
 
   # Returns the response body parsed according it own content type.
   config.include RequestHelper, type: :request
+
+  config.include StubHelper
 end
 
 Shoulda::Matchers.configure do |config|

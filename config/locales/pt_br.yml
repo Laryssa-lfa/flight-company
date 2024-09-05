@@ -1,0 +1,14 @@
+pt_br:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "Validation failed: %{errors}"
+      models:
+        flight_detail:
+          invalid:
+          blank: é obrigatório!
+          format: é inválido! Deve conter apenas 3 letras sem caracteres especiais.
+          other_than: não pode ser o mesmo de origem.
+          today: A data deve ser maior que hoje.
+          less_than: A data de chegada não pode ser menor que a data de partida.
+          airport: 'Aeroporto %{airport} não existe.'

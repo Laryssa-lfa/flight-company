@@ -17,27 +17,15 @@ class FlightDetailSerializer < ActiveModel::Serializer
   end
 
   attribute :connections do
-    search_connections
+    find_connections
   end
 
   private
 
-  def search_connections
-    related_connections = RelatedConnection.where(
-      flight_detail_id: object.id,
-      flight_id: @instance_options[:flight_id]
-    )
-    find_connection(related_connections).compact
-  end
-
-  def find_connection(connections)
-    connections.map do |connection|
-      find_flight_detail(connection) unless connection.connection_id.nil?
+  def find_connections
+    FlightDetail.find_connections(object).map do |connection|
+      connection_data(connection)
     end
-  end
-
-  def find_flight_detail(obj)
-    connection_data(FlightDetail.find(obj.connection_id))
   end
 
   def connection_data(obj)

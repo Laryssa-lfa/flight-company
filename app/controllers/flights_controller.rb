@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class FlightsController < ApplicationController
-  before_action :validate_data
-
   def search
     flights = SearchFlightService.execute(permitted_params)
 
@@ -19,10 +17,5 @@ class FlightsController < ApplicationController
       :arrival_time,
       :fare_category
     )
-  end
-
-  def validate_data
-    validate = ParamsValidateService.execute(permitted_params)
-    render json: validate.to_json if validate != true
   end
 end

@@ -10,7 +10,9 @@ class SearchFlightService
   end
 
   def itineraries
-    search_itineraries
+    return search_itineraries if flight_detail_valid?
+
+    message_error
   end
 
   private
@@ -18,6 +20,18 @@ class SearchFlightService
   attr_reader :arg
 
   WITHOUT_FLIGHT = 'Temporariamente sem opções de voos!'
+
+  def flight_detail_valid?
+    new_flight_detail.valid?
+  end
+
+  def message_error
+    new_flight_detail.errors.full_messages.to_json
+  end
+
+  def new_flight_detail
+    @new_flight_detail ||= FlightDetail.new(arg)
+  end
 
   def search_itineraries
     itineraries = FlightDetail.where(
@@ -29,9 +43,8 @@ class SearchFlightService
   end
 
   def search_flights(itineraries)
-    itineraries.map do |itinerary|
-      itinerary.flights.first
-    end
+    all_itineraries = itineraries.map(&:flights)
+    all_itineraries.flatten
   end
 
   def build_itineraries
