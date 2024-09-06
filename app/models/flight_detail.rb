@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FlightDetail < ApplicationRecord
-  has_many :related_connections, dependent: nil
+  has_many :related_connections, dependent: :destroy
   has_many :flights, through: :related_connections
 
   validates :origin_airport, :destination_airport, :departure_time, presence: true

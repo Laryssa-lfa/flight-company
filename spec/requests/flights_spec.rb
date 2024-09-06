@@ -21,14 +21,14 @@ RSpec.describe 'Flights', type: :request do
     end
 
     before do
-      0..(2.times do |index|
+      2.times do |index|
         create(:price, flight_id: flights[index].id)
         create(
           :related_connection,
-          flight_id: flights[index].id,
-          flight_detail_id: flight_detail[index].id
+          flight_id: flights[index - 1].id,
+          flight_detail_id: flight_detail[index - 1].id
         )
-      end)
+      end
     end
 
     it 'return flights list' do

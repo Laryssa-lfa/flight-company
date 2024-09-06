@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'net/http'
+
 class RequestHttpService
   def initialize(url)
     @url = url
