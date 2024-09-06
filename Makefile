@@ -26,7 +26,7 @@ test:
 		--rm \
 		--service-ports \
 		app \
-		bash -c "bundle exec rspec"
+		bash -c "bin/setup && bundle exec rspec"
 
 rubocop:
 	@docker-compose run \
@@ -34,4 +34,4 @@ rubocop:
 		--rm \
 		--service-ports \
 		app \
-		bash -c "rubocop"
+		bash -c "bin/setup && rubocop"

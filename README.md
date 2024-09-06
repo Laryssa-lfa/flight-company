@@ -56,7 +56,12 @@ Caso haja necessidade, poderá subir uma nova instancia da aplicação utilizand
 ```
 
 #### Testando
-Os testes serão implementadas posteriormente, na ultima parte do segundo desafio.
+Para executar os testes utilize com o comando:
+
+```bash
+  make test
+```
+
 
 #### Code Style (Rubocop)
 A aplicação está usando a gem [RuboCop Rails](https://docs.rubocop.org/rubocop-rails/index.html) como ferramenta linter. Para executar o *rubocop* em toda aplicação utilize o comando:
@@ -78,8 +83,8 @@ O endpoint *`search`* retorna os voos disponíveis mediante os parâmetros defin
 
 | Parâmetros | Tipo | Descrição |
 | :--------- | :--- | :-------- |
-| `origin_airport` | `string` | **Obrigatório**. Código do aeroporto de origem |
-| `destination_airport` | `string` | **Obrigatório**. Código do aeroporto de destino |
+| `origin_airport` | `string` | **Obrigatório**. Código do aeroporto de origem, formado por 3 letras sem números ou caracteres especiais |
+| `destination_airport` | `string` | **Obrigatório**. Código do aeroporto de destino, formado por 3 letras sem números ou caracteres especiais |
 | `departure_time` | `string` | **Obrigatório**. Data da partida do voo. O formato da data deve conter: dia e mês com 2 dígitos, e ano com 4 dígitos |
 | `arrival_time` | `string` | **Opcional**. Data de chegada no aeroporto de destino |
 | `fare_category` | `string` | **Opcional**. Define a categoria da passagem, podendo escolher entre: `economic`, `executive` ou `first_class` |
