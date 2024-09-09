@@ -33,7 +33,6 @@ class FlightDetail < ApplicationRecord
   end
 
   def airport_exist
-    Airport.new.prepare_db_for_airports
     return message_error_airport(origin_airport) unless origin_airport.present? && exist_airport?(origin_airport)
     return if destination_airport.present? && exist_airport?(destination_airport)
 

@@ -2,9 +2,21 @@
 
 require 'factory_bot'
 
-FactoryBot.create(:airport, iata: 'JPA', location: 'João pessoa')
-FactoryBot.create(:airport, iata: 'GRU', location: 'São Paulo')
-FactoryBot.create(:airport, iata: 'MVD', location: 'Uruguai')
+airport = Airport
+
+if airport.count.zero?
+  airports = airport.request_airports[:data]
+
+  if airports.any?
+    airports.each do |obj|
+      Airport.find_or_create_by!(
+        iata: obj[:iata],
+        name: obj[:name],
+        location: obj[:location]
+      )
+    end
+  end
+end
 
 if Rails.env.development?
   3.times do |_index|

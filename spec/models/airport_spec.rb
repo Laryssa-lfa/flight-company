@@ -9,7 +9,7 @@ RSpec.describe Airport, type: :model do
       let(:response) { Airport.by_iata(airport.iata) }
 
       it 'returns the airport' do
-        expect(response.to_json).to eql([airport].to_json)
+        expect(response.first).to eql(airport)
       end
     end
 
@@ -17,40 +17,49 @@ RSpec.describe Airport, type: :model do
       let(:airport) { Airport.new }
       let(:response) { Airport.by_iata(airport.iata) }
 
-      it 'returns empty array' do
-        expect(response.to_json).to eql([].to_json)
+      it 'returns nil' do
+        expect(response.first).to be_nil
       end
     end
 
     context 'when the airport does not exist' do
+      let!(:airport) { create(:airport) }
       let(:response) { Airport.by_iata('xxx') }
 
-      it 'returns empty array' do
-        expect(response.to_json).to eql([].to_json)
+      it 'returns nil' do
+        expect(response.first).to be_nil
       end
     end
   end
 
-  describe '#prepare_db_for_airports' do
-    context 'when exist airports in the db' do
-      let!(:airports) { create(:airport) }
-      let(:response) { Airport.new.prepare_db_for_airports }
+  describe '.request_airports' do
+    let(:response) { Airport.request_airports }
 
-      it 'returns nil' do
-        expect(response).to be_nil
+    before do
+      stub_get_request(url: "#{ENV.fetch('URL_API')}/airports", response: api_response)
+    end
+
+    context 'when external API returns airports' do
+      let(:api_response) do
+        {
+          data: [{
+            iata: 'JPA',
+            name: 'Presidente Castro Pinto International Airport',
+            location: 'João Pessoa'
+          }]
+        }
+      end
+
+      it 'returns the airports' do
+        expect(response).to eql(api_response)
       end
     end
 
-    context 'when there are no airports in the db' do
-      let(:api_response) { build(:airport) }
-      let(:response) { Airport.new.prepare_db_for_airports }
+    context 'when external API does not return airports' do
+      let(:api_response) { { data: [] } }
 
-      before do
-        stub_get_request(url: "#{ENV.fetch('URL_API')}/airports", response: [api_response])
-      end
-
-      it 'search the airports in API' do
-        expect(response.to_json).to eql([api_response].to_json)
+      it 'returns empty array' do
+        expect(response[:data]).to eql(api_response[:data])
       end
     end
   end
