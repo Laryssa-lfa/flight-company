@@ -8,7 +8,7 @@ FactoryBot.define do
     destination_airport { 'GRU' }
     flight_number { rand(60) }
     name_airline { 'Rebase Airline' }
-    departure_time { DateTime.current.strftime('%d/%m/%Y - %H:%M:%S') }
-    arrival_time { (DateTime.current + 2).strftime('%d/%m/%Y - %H:%M:%S') }
+    departure_time { DateTime.current }
+    arrival_time { (DateTime.current + 2) }
   end
 end

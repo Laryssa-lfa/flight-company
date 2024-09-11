@@ -1,0 +1,132 @@
+{
+  "data": {
+    "itineraries": [
+      {
+        "id": "32115-0-11952-2408221650",
+        "price": {
+          "raw": 256.0,
+          "formatted": "$256"
+        },
+        "legs": [
+          {
+            "id": "32115-0-11952-2408221650",
+            "origin": {
+              "id": "JPA",
+              "name": "Joao Pessoa",
+              "displayCode": "JPA",
+              "city": "Joao Pessoa",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "destination": {
+              "id": "GRU",
+              "name": "Sao Paulo Guarulhos",
+              "displayCode": "GRU",
+              "city": "Sao Paulo",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "durationInMinutes": 205,
+            "stopCount": 0,
+            "isSmallestStops": false,
+            "departure": "2025-10-24T17:10:00",
+            "arrival": "2025-10-24T20:30:00",
+            "segments": [
+              {
+                "id": "2408221650--32115",
+                "origin": {
+                  "flightPlaceId": "JPA",
+                  "displayCode": "JPA",
+                  "name": "Joao Pessoa",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "destination": {
+                  "flightPlaceId": "GRU",
+                  "displayCode": "GRU",
+                  "name": "Sao Paulo Guarulhos",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "departure": "2025-10-24T17:10:00",
+                "arrival": "2025-10-24T20:30:00",
+                "durationInMinutes": 205,
+                "flightNumber": "3463",
+                "operatingCarrier": {
+                  "name": "LATAM Airlines",
+                  "alternateId": "JJ",
+                  "allianceId": 0,
+                  "displayCode": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "32269-0-11952-2408222130",
+        "price": {
+          "raw": 249.1,
+          "formatted": "$250"
+        },
+        "legs": [
+          {
+            "id": "2408221755--32269",
+            "origin": {
+              "id": "JPA",
+              "name": "Joao Pessoa",
+              "displayCode": "JPA",
+              "city": "Joao Pessoa",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "destination": {
+              "id": "GRU",
+              "name": "Sao Paulo Guarulhos",
+              "displayCode": "GRU",
+              "city": "Sao Paulo",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "durationInMinutes": 215,
+            "stopCount": 0,
+            "isSmallestStops": false,
+            "departure": "2025-10-24T09:45:00",
+            "arrival": "2025-10-24T16:15:00",
+            "segments": [
+              {
+                "id": "2408222130--32269",
+                "origin": {
+                  "flightPlaceId": "JPA",
+                  "displayCode": "JPA",
+                  "name": "Joao Pessoa",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "destination": {
+                  "flightPlaceId": "GRU",
+                  "displayCode": "GRU",
+                  "name": "Sao Paulo Guarulhos",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "departure": "2025-10-24T09:45:00",
+                "arrival": "2025-10-24T16:15:00",
+                "durationInMinutes": 215,
+                "flightNumber": "1633",
+                "operatingCarrier": {
+                  "name": "GOL Linhas Aéreas",
+                  "alternateId": "G3",
+                  "allianceId": 0,
+                  "displayCode": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "status": true,
+  "message": "Successful"
+}

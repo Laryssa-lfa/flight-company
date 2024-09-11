@@ -4,6 +4,7 @@
 require 'spec_helper'
 require 'helpers/request_helper'
 require 'helpers/stub_helper'
+require 'helpers/fixture_helper'
 
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
@@ -74,7 +75,9 @@ RSpec.configure do |config|
   # Returns the response body parsed according it own content type.
   config.include RequestHelper, type: :request
 
+  # Configuration to assist in Spec testing
   config.include StubHelper
+  config.include FixtureHelper
 end
 
 Shoulda::Matchers.configure do |config|

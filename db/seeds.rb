@@ -7,7 +7,7 @@ airport = Airport
 if airport.count.zero?
   airports = airport.request_airports[:data]
 
-  if airports.any?
+  unless airports.nil?
     airports.each do |obj|
       Airport.find_or_create_by!(
         iata: obj[:iata],

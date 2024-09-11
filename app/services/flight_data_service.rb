@@ -54,8 +54,8 @@ class FlightDataService
       destiny: obj.dig(:destination, :name),
       origin_airport: obj.dig(:origin, :displayCode),
       destination_airport: obj.dig(:destination, :displayCode),
-      departure_time: format_date(obj[:departure]),
-      arrival_time: format_date(obj[:arrival]),
+      departure_time: obj[:departure],
+      arrival_time: obj[:arrival],
       flight_number: save_flight_number(obj),
       name_airline: save_name_airline(obj)
     })
@@ -86,10 +86,6 @@ class FlightDataService
         connection_id: flight_segment.id
       )
     end
-  end
-
-  def format_date(date)
-    DateTime.parse(date).strftime('%d/%m/%Y - %H:%M:%S')
   end
 
   def one_way_trip?(obj)

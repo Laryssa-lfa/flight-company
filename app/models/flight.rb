@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Flight < ApplicationRecord
-  has_one :price, dependent: :delete
+  has_one :price, dependent: :destroy
   delegate :formatted_price, to: :price, allow_nil: true
 
   has_many :related_connections, dependent: :destroy

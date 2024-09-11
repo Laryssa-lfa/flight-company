@@ -8,68 +8,132 @@ RSpec.describe 'Flights', type: :request do
   before do
     create(:airport)
     create(:airport, iata: 'GRU')
+    create(:airport, iata: 'SSA')
   end
 
   context 'when flights are available' do
     let(:payload) { build_payload('JPA', 'GRU', departure_date) }
-    let(:flights) { create_list(:flight, 2) }
-    let(:flight_detail) do
-      create_list(
-        :flight_detail, 2,
-        departure_time: departure_date.strftime('%d/%m/%Y - %H:%M:%S')
+    let(:response_request) { api_response[:data][:itineraries] }
+    let(:url) do
+      URI(
+        "#{ENV.fetch('URL_API')}/search-one-way?cabinClass=economy&departDate=" \
+        "#{departure_date.strftime('%Y-%m-%d')}&fromEntityId=JPA&returnDate=&toEntityId=GRU"
       )
     end
 
     before do
-      2.times do |index|
-        create(:price, flight_id: flights[index].id)
-        create(
-          :related_connection,
-          flight_id: flights[index - 1].id,
-          flight_detail_id: flight_detail[index - 1].id
+      stub_get_request(url: url, response: api_response)
+    end
+
+    context 'and without connection' do
+      let(:api_response) { load_json_symbolized('requests/one_way_flight.json') }
+
+      it 'return flights list' do
+        get '/flights/search', params: payload
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+        expect(response_body).to match(
+          [
+            {
+              fare_category: 'economic',
+              price: response_request.first[:price][:formatted],
+              flight_details: [{
+                origin: response_request.first.dig(:legs, 0, :origin, :name),
+                destiny: response_request.first.dig(:legs, 0, :destination, :name),
+                origin_airport: response_request.first.dig(:legs, 0, :origin, :displayCode),
+                destination_airport: response_request.first.dig(:legs, 0, :destination, :displayCode),
+                flight_number: response_request.first.dig(:legs, 0, :segments, 0, :flightNumber).to_i,
+                name_airline: response_request.first.dig(:legs, 0, :segments, 0, :operatingCarrier, :name),
+                departure_time: format_date(response_request.first.dig(:legs, 0, :departure)),
+                arrival_time: format_date(response_request.first.dig(:legs, 0, :arrival)),
+                connections: []
+              }]
+            },
+            {
+              fare_category: 'economic',
+              price: response_request.last[:price][:formatted],
+              flight_details: [{
+                origin: response_request.last.dig(:legs, 0, :origin, :name),
+                destiny: response_request.last.dig(:legs, 0, :destination, :name),
+                origin_airport: response_request.last.dig(:legs, 0, :origin, :displayCode),
+                destination_airport: response_request.last.dig(:legs, 0, :destination, :displayCode),
+                flight_number: response_request.last.dig(:legs, 0, :segments, 0, :flightNumber).to_i,
+                name_airline: response_request.last.dig(:legs, 0, :segments, 0, :operatingCarrier, :name),
+                departure_time: format_date(response_request.last.dig(:legs, 0, :departure)),
+                arrival_time: format_date(response_request.last.dig(:legs, 0, :arrival)),
+                connections: []
+              }]
+            }
+          ]
         )
       end
     end
 
-    it 'return flights list' do
-      get '/flights/search', params: payload
+    context 'and with connection' do
+      let(:api_response) { load_json_symbolized('requests/one_way_with_connection.json') }
 
-      expect(response).to have_http_status(:ok)
-      expect(response.content_type).to include('application/json')
-      expect(response_body).to match(
-        [
-          {
-            fare_category: flights[0].fare_category,
-            price: flights[0].price.formatted_price,
-            flight_details: [{
-              origin: flight_detail[0].origin,
-              destiny: flight_detail[0].destiny,
-              origin_airport: flight_detail[0].origin_airport,
-              destination_airport: flight_detail[0].destination_airport,
-              flight_number: flight_detail[0].flight_number,
-              name_airline: flight_detail[0].name_airline,
-              departure_time: flight_detail[0].departure_time,
-              arrival_time: flight_detail[0].arrival_time,
-              connections: []
-            }]
-          },
-          {
-            fare_category: flights[1].fare_category,
-            price: flights[1].price.formatted_price,
-            flight_details: [{
-              origin: flight_detail[1].origin,
-              destiny: flight_detail[1].destiny,
-              origin_airport: flight_detail[1].origin_airport,
-              destination_airport: flight_detail[1].destination_airport,
-              flight_number: flight_detail[1].flight_number,
-              name_airline: flight_detail[1].name_airline,
-              departure_time: flight_detail[1].departure_time,
-              arrival_time: flight_detail[1].arrival_time,
-              connections: []
-            }]
-          }
-        ]
-      )
+      it 'return flights list' do
+        get '/flights/search', params: payload
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+        expect(response_body).to match(
+          [
+            {
+              fare_category: 'economic',
+              price: response_request.first[:price][:formatted],
+              flight_details: [{
+                origin: response_request.first.dig(:legs, 0, :origin, :name),
+                destiny: response_request.first.dig(:legs, 0, :destination, :name),
+                origin_airport: response_request.first.dig(:legs, 0, :origin, :displayCode),
+                destination_airport: response_request.first.dig(:legs, 0, :destination, :displayCode),
+                flight_number: response_request.first.dig(:legs, 0, :segments, 0, :flightNumber).to_i,
+                name_airline: response_request.first.dig(:legs, 0, :segments, 0, :operatingCarrier, :name),
+                departure_time: format_date(response_request.first.dig(:legs, 0, :departure)),
+                arrival_time: format_date(response_request.first.dig(:legs, 0, :arrival)),
+                connections: []
+              }]
+            },
+            {
+              fare_category: 'economic',
+              price: response_request.last[:price][:formatted],
+              flight_details: [{
+                origin: response_request.last.dig(:legs, 0, :origin, :name),
+                destiny: response_request.last.dig(:legs, 0, :destination, :name),
+                origin_airport: response_request.last.dig(:legs, 0, :origin, :displayCode),
+                destination_airport: response_request.last.dig(:legs, 0, :destination, :displayCode),
+                flight_number: nil,
+                name_airline: nil,
+                departure_time: format_date(response_request.last.dig(:legs, 0, :departure)),
+                arrival_time: format_date(response_request.last.dig(:legs, 0, :arrival)),
+                connections: [
+                  {
+                    origin: response_request.last.dig(:legs, 0, :segments, 0, :origin, :name),
+                    destiny: response_request.last.dig(:legs, 0, :segments, 0, :destination, :name),
+                    origin_airport: response_request.last.dig(:legs, 0, :segments, 0, :origin, :displayCode),
+                    destination_airport: response_request.last.dig(:legs, 0, :segments, 0, :destination, :displayCode),
+                    flight_number: response_request.last.dig(:legs, 0, :segments, 0, :flightNumber).to_i,
+                    name_airline: response_request.last.dig(:legs, 0, :segments, 0, :operatingCarrier, :name),
+                    departure_time: format_date(response_request.last.dig(:legs, 0, :segments, 0, :departure)),
+                    arrival_time: format_date(response_request.last.dig(:legs, 0, :segments, 0, :arrival))
+                  },
+                  {
+                    origin: response_request.last.dig(:legs, 0, :segments, 1, :origin, :name),
+                    destiny: response_request.last.dig(:legs, 0, :segments, 1, :destination, :name),
+                    origin_airport: response_request.last.dig(:legs, 0, :segments, 1, :origin, :displayCode),
+                    destination_airport: response_request.last.dig(:legs, 0, :segments, 1, :destination, :displayCode),
+                    flight_number: response_request.last.dig(:legs, 0, :segments, 1, :flightNumber).to_i,
+                    name_airline: response_request.last.dig(:legs, 0, :segments, 1, :operatingCarrier, :name),
+                    departure_time: format_date(response_request.last.dig(:legs, 0, :segments, 1, :departure)),
+                    arrival_time: format_date(response_request.last.dig(:legs, 0, :segments, 1, :arrival))
+                  }
+                ]
+              }]
+            }
+          ]
+        )
+      end
     end
   end
 
@@ -187,5 +251,9 @@ RSpec.describe 'Flights', type: :request do
       destination_airport: destination_airport.to_s,
       departure_time: date.strftime('%d/%m/%Y')
     }
+  end
+
+  def format_date(date)
+    DateTime.parse(date).strftime('%FT%T.000Z')
   end
 end

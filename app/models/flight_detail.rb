@@ -9,8 +9,8 @@ class FlightDetail < ApplicationRecord
   validates :origin_airport, :destination_airport, format: {
     with: /\A[a-zA-Z]{3}\z/, message: I18n.t('activerecord.errors.models.flight_detail.format')
   }
-  validate :less_than_today, if: :departure_time
-  validate :less_than_departure, if: :arrival_time
+  validate :departure_time_is_past, if: :departure_time
+  validate :arrival_less_than_departure, if: :arrival_time
   validate :airport_exist
 
   scope :find_connections, ->(obj) {
@@ -18,16 +18,24 @@ class FlightDetail < ApplicationRecord
     where(id: connection_ids)
   }
 
+  scope :find_flight_details, ->(origin_airport, destination_airport, departure_time) {
+    where(
+      origin_airport: origin_airport,
+      destination_airport: destination_airport,
+      departure_time: Time.zone.parse(departure_time)..Time.zone.parse(departure_time).end_of_day
+    )
+  }
+
   private
 
-  def less_than_today
-    return unless Date.parse(departure_time) < Time.zone.today
+  def departure_time_is_past
+    return unless departure_time < Time.zone.today
 
     errors.add(:base, I18n.t('activerecord.errors.models.flight_detail.today'))
   end
 
-  def less_than_departure
-    return unless Date.parse(arrival_time) < Date.parse(departure_time)
+  def arrival_less_than_departure
+    return unless arrival_time < departure_time
 
     errors.add(:base, I18n.t('activerecord.errors.models.flight_detail.less_than'))
   end

@@ -2,7 +2,11 @@
 
 class SearchFlightService
   def initialize(arg)
-    @arg = arg
+    @origin_airport = arg[:origin_airport]
+    @destination_airport = arg[:destination_airport]
+    @departure_time = arg[:departure_time]
+    @arrival_time = arg[:arrival_time]
+    @fare_category = arg[:fare_category]
   end
 
   def self.execute(arg)
@@ -17,7 +21,7 @@ class SearchFlightService
 
   private
 
-  attr_reader :arg
+  attr_reader :origin_airport, :destination_airport, :departure_time, :arrival_time, :fare_category
 
   WITHOUT_FLIGHT = 'Temporariamente sem opções de voos!'
 
@@ -30,15 +34,16 @@ class SearchFlightService
   end
 
   def new_flight_detail
-    @new_flight_detail ||= FlightDetail.new(arg)
+    @new_flight_detail ||= FlightDetail.new({
+      origin_airport: origin_airport,
+      destination_airport: destination_airport,
+      departure_time: departure_time,
+      arrival_time: arrival_time
+    })
   end
 
   def search_itineraries
-    itineraries = FlightDetail.where(
-      origin_airport: arg[:origin_airport],
-      destination_airport: arg[:destination_airport]
-    ).where('departure_time LIKE ?', format_date_bd(arg[:departure_time]))
-
+    itineraries = FlightDetail.find_flight_details(origin_airport, destination_airport, departure_time)
     itineraries.any? ? search_flights(itineraries) : build_itineraries
   end
 
@@ -48,7 +53,7 @@ class SearchFlightService
   end
 
   def build_itineraries
-    url = build_url('search-one-way') if arg[:arrival_time].nil?
+    url = build_url('search-one-way') if arrival_time.nil?
     url ||= build_url('search-roundtrip')
 
     request_flights_api(URI(url))
@@ -58,11 +63,7 @@ class SearchFlightService
     response = RequestHttpService.request(url)
     return WITHOUT_FLIGHT.to_json if !response[:status] || response[:data][:itineraries].empty?
 
-    FlightDataService.execute(response[:data][:itineraries], arg[:fare_category])
-  end
-
-  def format_date_bd(date)
-    "#{DateTime.parse(date).strftime('%d/%m/%Y')}%" unless date.nil?
+    FlightDataService.execute(response[:data][:itineraries], fare_category)
   end
 
   def format_date(date)
@@ -74,8 +75,8 @@ class SearchFlightService
   end
 
   def build_url(intineration)
-    "#{ENV.fetch('URL_API')}/#{intineration}?fromEntityId=#{format_airport(arg[:origin_airport])}" \
-      "&toEntityId=#{format_airport(arg[:destination_airport])}&departDate=#{format_date(arg[:departure_time])}" \
-      "&returnDate=#{format_date(arg[:arrival_time])}&cabinClass=economy"
+    "#{ENV.fetch('URL_API')}/#{intineration}?fromEntityId=#{format_airport(origin_airport)}" \
+      "&toEntityId=#{format_airport(destination_airport)}&departDate=#{format_date(departure_time)}" \
+      "&returnDate=#{format_date(arrival_time)}&cabinClass=economy"
   end
 end

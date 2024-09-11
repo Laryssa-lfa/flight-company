@@ -1,0 +1,160 @@
+{
+  "data": {
+    "itineraries": [
+      {
+        "id": "11952-2408241320--32115-0-12805-2408241630",
+        "price": {
+          "raw": 525.23,
+          "formatted": "$526"
+        },
+        "legs": [
+          {
+            "id": "32115-0-11952-2408212030",
+            "origin": {
+              "id": "JPA",
+              "entityId": "95673455",
+              "name": "Joao Pessoa",
+              "displayCode": "JPA",
+              "city": "Joao Pessoa",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "destination": {
+              "id": "GRU",
+              "entityId": "95673332",
+              "name": "Sao Paulo Guarulhos",
+              "displayCode": "GRU",
+              "city": "Sao Paulo",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "durationInMinutes": 200,
+            "stopCount": 0,
+            "isSmallestStops": false,
+            "departure": "2025-10-24T17:10:00",
+            "arrival": "2025-10-24T20:30:00",
+            "segments": [
+              {
+                "id": "2408212030--32115",
+                "origin": {
+                  "flightPlaceId": "JPA",
+                  "displayCode": "JPA",
+                  "name": "Joao Pessoa",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "destination": {
+                  "flightPlaceId": "GRU",
+                  "displayCode": "GRU",
+                  "name": "Sao Paulo Guarulhos",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "departure": "2025-10-24T17:10:00",
+                "arrival": "2025-10-24T20:30:00",
+                "durationInMinutes": 200,
+                "flightNumber": "3465",
+                "operatingCarrier": {
+                  "name": "LATAM Airlines",
+                  "alternateId": "JJ",
+                  "allianceId": 0,
+                  "displayCode": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "32269-1-12805-2408241615-11952-2408240945",
+        "price": {
+          "raw": 720.01,
+          "formatted": "$721"
+        },
+        "legs": [
+          {
+            "id": "32269-0-11952-2408212130",
+            "origin": {
+              "id": "JPA",
+              "name": "Joao Pessoa",
+              "displayCode": "JPA",
+              "city": "Joao Pessoa",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "destination": {
+              "id": "GRU",
+              "name": "Sao Paulo Guarulhos",
+              "displayCode": "GRU",
+              "city": "Sao Paulo",
+              "country": "Brazil",
+              "isHighlighted": false
+            },
+            "durationInMinutes": 215,
+            "stopCount": 1,
+            "departure": "2025-10-24T09:45:00",
+            "arrival": "2025-10-24T16:15:00",
+            "segments": [
+              {
+                "id": "2408212130--32269",
+                "origin": {
+                  "flightPlaceId": "JPA",
+                  "displayCode": "JPA",
+                  "name": "Joao Pessoa",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "destination": {
+                  "flightPlaceId": "SSA",
+                  "displayCode": "SSA",
+                  "name": "Salvador",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "departure": "2025-10-24T09:45:00",
+                "arrival": "2025-10-24T12:15:00",
+                "durationInMinutes": 90,
+                "flightNumber": "2142",
+                "operatingCarrier": {
+                  "name": "GOL Linhas Aéreas",
+                  "alternateId": "G3",
+                  "allianceId": 0,
+                  "displayCode": ""
+                }
+              },
+              {
+                "id": "2408212130--32269",
+                "origin": {
+                  "flightPlaceId": "SSA",
+                  "displayCode": "SSA",
+                  "name": "Salvador",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "destination": {
+                  "flightPlaceId": "GRU",
+                  "displayCode": "GRU",
+                  "name": "Sao Paulo Guarulhos",
+                  "type": "Airport",
+                  "country": "Brazil"
+                },
+                "departure": "2025-10-24T14:45:00",
+                "arrival": "2025-10-24T16:15:00",
+                "durationInMinutes": 150,
+                "flightNumber": "1694",
+                "operatingCarrier": {
+                  "name": "GOL Linhas Aéreas",
+                  "alternateId": "G3",
+                  "allianceId": 0,
+                  "displayCode": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "status": true,
+  "message": "Successful"
+}
