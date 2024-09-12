@@ -48,8 +48,7 @@ class SearchFlightService
   end
 
   def search_flights(itineraries)
-    all_itineraries = itineraries.map(&:flights)
-    all_itineraries.flatten
+    itineraries.map(&:flights).flatten
   end
 
   def build_itineraries

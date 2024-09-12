@@ -2,10 +2,8 @@
 
 require 'factory_bot'
 
-airport = Airport
-
-if airport.count.zero?
-  airports = airport.request_airports[:data]
+if Airport.count.zero?
+  airports = Airport.request_airports[:data]
 
   unless airports.nil?
     airports.each do |obj|

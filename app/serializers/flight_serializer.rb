@@ -3,9 +3,7 @@
 class FlightSerializer < ActiveModel::Serializer
   attribute :fare_category
 
-  attribute :price do
-    object&.formatted_price
-  end
+  attribute :formatted_price, key: :price
 
   attribute :flight_details do
     object.flight_details.uniq.map do |obj|
