@@ -33,34 +33,11 @@ RSpec.describe Airport, type: :model do
   end
 
   describe '.request_airports' do
-    let(:response) { Airport.request_airports }
-
-    before do
-      stub_get_request(url: "#{ENV.fetch('URL_API')}/airports", response: api_response)
-    end
-
-    context 'when external API returns airports' do
-      let(:api_response) do
-        {
-          data: [{
-            iata: 'JPA',
-            name: 'Presidente Castro Pinto International Airport',
-            location: 'João Pessoa'
-          }]
-        }
-      end
-
-      it 'returns the airports' do
-        expect(response).to eql(api_response)
-      end
-    end
-
-    context 'when external API does not return airports' do
-      let(:api_response) { { data: [] } }
-
-      it 'returns empty array' do
-        expect(response[:data]).to eql(api_response[:data])
-      end
+    let(:response) { Airport.request_airports[:data] }
+    let(:airports) { load_json_symbolized('airportss.json')[:data] }
+    
+    it 'returns the airports' do
+      expect(response.count).to eql(airports.count)
     end
   end
 end

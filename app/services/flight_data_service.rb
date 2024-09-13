@@ -49,27 +49,24 @@ class FlightDataService
   end
 
   def build_flight_detail(obj)
-    flight_detail = FlightDetail.find_or_create_by!({
+    node = choose_node_for_number_and_airline_name(obj)
+
+    FlightDetail.find_or_create_by!({
       origin: obj.dig(:origin, :name),
       destiny: obj.dig(:destination, :name),
       origin_airport: obj.dig(:origin, :displayCode),
       destination_airport: obj.dig(:destination, :displayCode),
       departure_time: obj[:departure],
-      arrival_time: obj[:arrival]
+      arrival_time: obj[:arrival],
+      flight_number: node[:flightNumber],
+      name_airline: node.dig(:operatingCarrier, :name)
     })
-    number_and_airline(flight_detail, obj)
   end
 
-  def number_and_airline(flight_detail, obj)
-    if one_way_trip?(obj)
-      flight_detail.flight_number = obj.dig(:segments, 0, :flightNumber)
-      flight_detail.name_airline = obj.dig(:segments, 0, :operatingCarrier, :name)
-    elsif !segments?(obj)
-      flight_detail.flight_number = obj[:flightNumber]
-      flight_detail.name_airline = obj.dig(:operatingCarrier, :name)
-    end
-    flight_detail.save
-    flight_detail
+  def choose_node_for_number_and_airline_name(obj)
+    return obj.dig(:segments, 0) if one_way_trip?(obj)
+
+    obj
   end
 
   def build_connections(segments, flight_id, flight_detail_id)
