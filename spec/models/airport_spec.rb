@@ -35,7 +35,7 @@ RSpec.describe Airport, type: :model do
   describe '.request_airports' do
     let(:response) { Airport.request_airports[:data] }
     let(:airports) { load_json_symbolized('airportss.json')[:data] }
-    
+
     it 'returns the airports' do
       expect(response.count).to eql(airports.count)
     end

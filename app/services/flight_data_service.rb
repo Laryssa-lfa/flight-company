@@ -81,10 +81,6 @@ class FlightDataService
   end
 
   def one_way_trip?(obj)
-    segments?(obj) && (obj[:stopCount]).zero?
-  end
-
-  def segments?(obj)
-    obj[:segments].present?
+    obj[:segments].present? && (obj[:stopCount]).zero?
   end
 end
