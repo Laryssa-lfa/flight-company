@@ -238,29 +238,40 @@ RSpec.describe 'Flights', type: :request do
   end
 
   context 'search_destinations request' do
-    let(:api_response) { load_json_symbolized('requests/one_way_flight.json') }
-    let(:response_request) { api_response[:data][:itineraries] }
-    let(:departure_date) { DateTime.current }
+    context 'when there is flight searched' do
+      let(:api_response) { load_json_symbolized('requests/one_way_flight.json') }
+      let(:departure_date) { DateTime.current }
 
-    before do
-      %w[GRU SSA REC CNF BSB GIG MVD].each do |airport|
-        payload = build_payload('JPA', airport, departure_date)
-        url = build_url(departure_date, airport)
+      before do
+        %w[GRU SSA REC CNF BSB GIG MVD].each do |airport|
+          payload = build_payload('JPA', airport, departure_date)
+          url = build_url(departure_date, airport)
+          stub_get_request(url: url, response: api_response)
+          get '/flights/search', params: payload
+        end
+
+        url = build_url(departure_date, 'BSB')
         stub_get_request(url: url, response: api_response)
-        get '/flights/search', params: payload
+        get '/flights/search', params: build_payload('JPA', 'BSB', departure_date)
       end
 
-      url = build_url(departure_date, 'BSB')
-      stub_get_request(url: url, response: api_response)
-      get '/flights/search', params: build_payload('JPA', 'BSB', departure_date)
+      it 'returns the most searched destinations' do
+        get '/flights/search_destinations'
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+        expect(response_body).to match({ BSB: 2, CNF: 1, GRU: 1, REC: 1, SSA: 1 })
+      end
     end
 
-    it 'returns the most searched destinations' do
-      get '/flights/search_destinations'
+    context 'when there is no flight searched' do
+      it 'returns be nil' do
+        get '/flights/search_destinations'
 
-      expect(response).to have_http_status(:ok)
-      expect(response.content_type).to include('application/json')
-      expect(response_body).to match({ BSB: 2, CNF: 1, GRU: 1, REC: 1, SSA: 1 })
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('application/json')
+        expect(response_body).to eql({})
+      end
     end
   end
 
