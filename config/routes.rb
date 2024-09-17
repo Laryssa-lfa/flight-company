@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   get 'flights/search'
+  get 'flights/search_destinations'
 end
