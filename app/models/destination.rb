@@ -7,7 +7,7 @@ class Destination < ApplicationRecord
   }
 
   def self.start_date
-    Time.zone.parse(-2.weeks.from_now.strftime('%d-%m-%Y'))
+    Time.zone.parse(DateTime.current.weeks_ago(2).strftime('%d-%m-%Y'))
   end
 
   def self.end_date
