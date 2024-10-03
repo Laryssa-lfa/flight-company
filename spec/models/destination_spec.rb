@@ -8,17 +8,17 @@ RSpec.describe Destination, type: :model do
       let(:response) { Destination.find_last_destinations }
 
       before do
+        Destination.create(name: 'SSA')
         %w[GRU SSA REC CNF BSB GIG MVD].each do |airport|
           Destination.create(name: airport)
         end
-
         4.times do
           Destination.create(name: 'GRU')
         end
       end
 
       it 'returns the most searched destinations' do
-        expect(response).to match({ 'GRU' => 5, 'SSA' => 1, 'REC' => 1, 'CNF' => 1, 'BSB' => 1 })
+        expect(response).to match({ 'GRU' => 5, 'SSA' => 2, 'CNF' => 1, 'GIG' => 1, 'BSB' => 1 })
       end
     end
 

@@ -260,7 +260,7 @@ RSpec.describe 'Flights', type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
-        expect(response_body).to match({ BSB: 2, CNF: 1, GRU: 1, REC: 1, SSA: 1 })
+        expect(response_body).to match({ BSB: 2, CNF: 1, GIG: 1, GRU: 1, MVD: 1 })
       end
     end
 
